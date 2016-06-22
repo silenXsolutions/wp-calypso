@@ -36,12 +36,12 @@ export function fullSyncRequest( state = {}, action ) {
 			break;
 		case JETPACK_SYNC_START_SUCCESS:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: { isRequesting: false, scheduled: action.scheduled }
+				[ action.siteId ]: { isRequesting: false, scheduled: get( action, 'data.scheduled' ) }
 			} );
 			break;
 		case JETPACK_SYNC_START_ERROR:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: { isRequesting: false, scheduled: false, error: get( action, 'data.scheduled' ) }
+				[ action.siteId ]: { isRequesting: false, scheduled: false, error: action.error }
 			} );
 			break;
 	}
@@ -52,11 +52,17 @@ export function syncStatus( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_SYNC_STATUS_REQUEST:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: { isRequesting: true }
+				[ action.siteId ]: Object.assign(
+					{ isRequesting: true },
+					get( state, [ action.siteId ], {} )
+				)
 			} );
 		case JETPACK_SYNC_STATUS_RECEIVED:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: { isRequesting: false }
+				[ action.siteId ]: Object.assign(
+					{ isRequesting: false },
+					get( state, [ action.siteId ], {} )
+				)
 			} );
 		case JETPACK_SYNC_STATUS_SUCCESS:
 			return Object.assign( {}, state, {
