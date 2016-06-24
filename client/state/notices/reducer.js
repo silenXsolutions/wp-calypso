@@ -4,6 +4,7 @@
 import { combineReducers } from 'redux';
 import omit from 'lodash/omit';
 import reduce from 'lodash/reduce';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,6 +12,7 @@ import reduce from 'lodash/reduce';
 import {
 	NOTICE_CREATE,
 	NOTICE_REMOVE,
+	POST_SAVE_SUCCESS,
 	ROUTE_SET
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
@@ -48,6 +50,53 @@ export const items = createReducer( {}, {
 			memo[ noticeId ] = nextNotice;
 			return memo;
 		}, {} );
+	},
+	[ POST_SAVE_SUCCESS ]: ( state, action ) => {
+		const { post } = action;
+		if ( ! post.status ) {
+			return state;
+		}
+
+		const noticeId = `post-save-success-${ post.status }`;
+
+		let count;
+		if ( state[ noticeId ] ) {
+			count = state[ noticeId ].count + 1;
+		} else {
+			count = 1;
+		}
+
+		let text;
+		switch ( post.status ) {
+			case 'trash':
+				if ( 1 === count ) {
+					text = translate( 'Post successfully moved to trash' );
+				} else {
+					text = translate(
+						'%d post successfully moved to trash',
+						'%d posts successfully moved to trash',
+						{ count, args: [ count ] }
+					);
+				}
+				break;
+		}
+
+		if ( ! text ) {
+			return state;
+		}
+
+		return {
+			...state,
+			[ noticeId ]: {
+				showDismiss: true,
+				isPersistent: false,
+				displayOnNextPage: false,
+				status: 'is-success',
+				noticeId,
+				count,
+				text
+			}
+		};
 	}
 } );
 
