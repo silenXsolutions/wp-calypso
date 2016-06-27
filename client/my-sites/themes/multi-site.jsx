@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
+import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
@@ -26,76 +27,32 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
 
 const ThemesMultiSite = React.createClass( {
-
 	getInitialState() {
 		return {
-			selectedTheme: null,
-			selectedAction: null,
 			showPreview: null,
 			previewingTheme: null,
 		};
-	},
-
-	showSiteSelectorModal( action, theme ) {
-		this.setState( { selectedTheme: theme, selectedAction: action } );
 	},
 
 	togglePreview( theme ) {
 		this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
 	},
 
-	hideSiteSelectorModal() {
-		this.showSiteSelectorModal( null, null );
-	},
-
-	isThemeOrActionSet() {
-		return this.state.selectedTheme || this.state.selectedAction;
-	},
-
-	getButtonOptions() {
-		const buttonOptions = {
-			preview: {
-				action: theme => this.togglePreview( theme ),
-			},
-			purchase: config.isEnabled( 'upgrades/checkout' )
-				? {
-					action: theme => this.showSiteSelectorModal( 'purchase', theme ),
-					hideForTheme: theme => ! theme.price
-				}
-				: {},
-			activate: {
-				action: theme => this.showSiteSelectorModal( 'activate', theme ),
-				hideForTheme: theme => theme.price
-			},
-			tryandcustomize: {
-				action: theme => this.showSiteSelectorModal( 'tryandcustomize', theme ),
-			},
-			separator: {
-				separator: true
-			},
-			info: {
-				getUrl: theme => getDetailsUrl( theme ),
-			},
-			support: {
-				getUrl: theme => getSupportUrl( theme ),
-				// Free themes don't have support docs.
-				hideForTheme: theme => ! isPremium( theme )
-			},
-			help: {
-				getUrl: theme => getHelpUrl( theme )
-			},
-		};
-		return merge( {}, buttonOptions, actionLabels );
-	},
-
 	onPreviewButtonClick( theme ) {
 		this.setState( { showPreview: false }, () => {
-			this.getButtonOptions().tryandcustomize.action( theme );
+			this.props.options.tryandcustomize.action( theme );
 		} );
 	},
 
 	render() {
-		const buttonOptions = this.getButtonOptions();
+		const buttonOptions = merge(
+			{},
+			{ preview: {
+				label: actionLabels.preview.label,
+				action: theme => this.togglePreview( theme )
+			} },
+			this.props.options,
+		);
 
 		return (
 			<Main className="themes">
@@ -125,19 +82,16 @@ const ThemesMultiSite = React.createClass( {
 					tier={ this.props.tier }
 					queryParams={ this.props.queryParams }
 					themesList={ this.props.themesList } />
-				{ this.isThemeOrActionSet() && <ThemesSiteSelectorModal
-					name={ this.state.selectedAction /* TODO: Can we get rid of this prop? */ }
-					label={ actionLabels[ this.state.selectedAction ].label }
-					header={ actionLabels[ this.state.selectedAction ].header }
-					selectedTheme={ this.state.selectedTheme }
-					onHide={ this.hideSiteSelectorModal }
-					action={ this.props[ this.state.selectedAction ] }
-					sourcePath={ '/design' }
-				/> }
 			</Main>
 		);
 	}
 } );
+
+const ThemesMultiSiteComp = ( props ) => (
+	<ThemesSiteSelectorModal { ...props } sourcePath={ '/design' }>
+		<ThemesMultiSite />
+	</ThemesSiteSelectorModal>
+);
 
 export default connect(
 	state => ( {
@@ -148,5 +102,40 @@ export default connect(
 		activate,
 		tryandcustomize,
 		purchase
-	}
-)( ThemesMultiSite );
+	},
+	( stateProps, dispatchProps, ownProps ) => Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		{ options: merge(
+			{},
+			mapValues( dispatchProps, action => ( { action } ) ),
+			{
+				purchase: config.isEnabled( 'upgrades/checkout' )
+					? {
+						hideForTheme: theme => ! theme.price
+					}
+					: {},
+				activate: {
+					hideForTheme: theme => theme.price
+				},
+				tryandcustomize: {},
+				separator: {
+					separator: true
+				},
+				info: {
+					getUrl: theme => getDetailsUrl( theme ),
+				},
+				support: {
+					getUrl: theme => getSupportUrl( theme ),
+					// Free themes don't have support docs.
+					hideForTheme: theme => ! isPremium( theme )
+				},
+				help: {
+					getUrl: theme => getHelpUrl( theme )
+				},
+			},
+			actionLabels
+		) }
+	)
+)( ThemesMultiSiteComp );
