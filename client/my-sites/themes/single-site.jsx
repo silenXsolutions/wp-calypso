@@ -22,7 +22,6 @@ import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import ThemesSelection from './themes-selection';
 import {
-	getCustomizeUrl,
 	getDetailsUrl,
 	getSupportUrl,
 	getHelpUrl,
@@ -70,59 +69,10 @@ const ThemesSingleSite = React.createClass( {
 		}
 	},
 
-	getButtonOptions() {
-		const site = sites.getSelectedSite(),
-			{ isCustomizable, isJetpack } = this.props,
-			buttonOptions = {
-				customize: isCustomizable
-					? {
-						getUrl: theme => getCustomizeUrl( theme, site ),
-						hideForTheme: theme => ! theme.active
-					}
-					: {},
-				preview: {
-					action: theme => this.togglePreview( theme ),
-					hideForTheme: theme => theme.active
-				},
-				purchase: config.isEnabled( 'upgrades/checkout' )
-					? {
-						action: this.props.purchase,
-						hideForTheme: theme => theme.active || theme.purchased || ! theme.price
-					}
-					: {},
-				activate: {
-					action: this.props.activate,
-					hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
-				},
-				tryandcustomize: {
-					getUrl: theme => getCustomizeUrl( theme, site ),
-					hideForTheme: theme => theme.active
-				},
-				separator: {
-					separator: true
-				},
-				info: {
-					getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
-				},
-				support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
-					? {
-						getUrl: theme => getSupportUrl( theme, site ),
-						hideForTheme: theme => ! isPremium( theme )
-					}
-					: {},
-				help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
-					? {
-						getUrl: theme => getHelpUrl( theme, site )
-					}
-					: {},
-			};
-
-		return merge( {}, buttonOptions, actionLabels );
-	},
-
 	onPreviewButtonClick( theme ) {
+		const defaultOption = this.props.options[ this.props.defaultOption ];
 		this.setState( { showPreview: false }, () => {
-			this.props.customize( theme );
+			defaultOption.action( theme );
 		} );
 	},
 
@@ -140,9 +90,17 @@ const ThemesSingleSite = React.createClass( {
 
 	render() {
 		const site = sites.getSelectedSite(),
-			isJetpack = site.jetpack,
+			{ isJetpack } = this.props,
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
-			buttonOptions = this.getButtonOptions(),
+			buttonOptions = merge(
+				{},
+				this.props.options,
+				{ preview: {
+					label: actionLabels.preview.label,
+					action: theme => this.togglePreview( theme )
+				} }
+			),
+			defaultOption = this.props.options[ this.props.defaultOption ],
 			getScreenshotAction = function( theme ) {
 				return buttonOptions[ theme.active ? 'customize' : 'info' ];
 			};
@@ -163,9 +121,7 @@ const ThemesSingleSite = React.createClass( {
 					<ThemePreview showPreview={ this.state.showPreview }
 						theme={ this.state.previewingTheme }
 						onClose={ this.togglePreview }
-						buttonLabel={ this.translate( 'Try & Customize', {
-							context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
-						} ) }
+						buttonLabel={ defaultOption.label }
 						onButtonClick={ this.onPreviewButtonClick } />
 				}
 				<ThanksModal
@@ -223,13 +179,57 @@ export default connect(
 		customize,
 		purchase
 	},
-	( stateProps, dispatchProps, ownProps ) => Object.assign(
-		{},
-		ownProps,
-		stateProps,
-		mapValues(
-			dispatchProps,
-			action => theme => action( theme, stateProps.selectedSite, 'showcase' )
-		)
-	)
+	( stateProps, dispatchProps, ownProps ) => {
+		const { selectedSite: site, isCustomizable, isJetpack } = stateProps;
+
+		return Object.assign(
+			{},
+			ownProps,
+			stateProps,
+			{ options: merge(
+				{},
+				mapValues( dispatchProps, action => theme => action( theme, site, 'showcase' ) ),
+				{
+					customize: isCustomizable
+						? {
+							hideForTheme: theme => ! theme.active
+						}
+						: {},
+					preview: {
+						hideForTheme: theme => theme.active
+					},
+					purchase: config.isEnabled( 'upgrades/checkout' )
+						? {
+							hideForTheme: theme => theme.active || theme.purchased || ! theme.price
+						}
+						: {},
+					activate: {
+						hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
+					},
+					tryandcustomize: {
+						action: theme => dispatchProps.customize( theme, site, 'showcase' ),
+						hideForTheme: theme => theme.active
+					},
+					separator: {
+						separator: true
+					},
+					info: {
+						getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
+					},
+					support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+						? {
+							getUrl: theme => getSupportUrl( theme, site ),
+							hideForTheme: theme => ! isPremium( theme )
+						}
+						: {},
+					help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
+						? {
+							getUrl: theme => getHelpUrl( theme, site )
+						}
+						: {},
+				},
+				actionLabels
+			), defaultOption: 'customize' }
+		);
+	}
 )( ThemesSingleSite );
