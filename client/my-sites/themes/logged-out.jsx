@@ -31,33 +31,6 @@ const ThemesLoggedOut = React.createClass( {
 		this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
 	},
 
-	getButtonOptions() {
-		const buttonOptions = {
-			signup: {
-				getUrl: theme => getSignupUrl( theme ),
-			},
-			preview: {
-				action: theme => this.togglePreview( theme ),
-				hideForTheme: theme => theme.active
-			},
-			separator: {
-				separator: true
-			},
-			info: {
-				getUrl: theme => getDetailsUrl( theme ),
-			},
-			support: {
-				getUrl: theme => getSupportUrl( theme ),
-				// Free themes don't have support docs.
-				hideForTheme: theme => ! isPremium( theme )
-			},
-			help: {
-				getUrl: theme => getHelpUrl( theme )
-			},
-		};
-		return merge( {}, buttonOptions, actionLabels );
-	},
-
 	onPreviewButtonClick( theme ) {
 		this.setState( { showPreview: false }, () => {
 			this.props.signup( theme );
@@ -65,7 +38,14 @@ const ThemesLoggedOut = React.createClass( {
 	},
 
 	render() {
-		const buttonOptions = this.getButtonOptions();
+		const buttonOptions = merge(
+			{},
+			this.props.options,
+			{ preview: {
+				label: actionLabels.preview.label,
+				action: theme => this.togglePreview( theme )
+			} }
+		);
 
 		return (
 			<Main className="themes">
@@ -104,5 +84,37 @@ export default connect(
 		queryParams: getQueryParams( state ),
 		themesList: getThemesList( state )
 	} ),
-	{ signup }
+	{ signup },
+	( stateProps, dispatchProps, ownProps ) => Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		{ options: merge(
+			{},
+			{
+				signup: {
+					action: dispatchProps.signup,
+					getUrl: theme => getSignupUrl( theme ),
+				},
+				preview: {
+					hideForTheme: theme => theme.active
+				},
+				separator: {
+					separator: true
+				},
+				info: {
+					getUrl: theme => getDetailsUrl( theme ),
+				},
+				support: {
+					getUrl: theme => getSupportUrl( theme ),
+					// Free themes don't have support docs.
+					hideForTheme: theme => ! isPremium( theme )
+				},
+				help: {
+					getUrl: theme => getHelpUrl( theme )
+				}
+			},
+			actionLabels
+		) }
+	)
 )( ThemesLoggedOut );
