@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
@@ -18,7 +18,17 @@ import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-const ThemesLoggedOut = React.createClass( {
+export const ThemeShowcase = React.createClass( {
+	propTypes: {
+		// Connected props
+		options: PropTypes.objectOf( PropTypes.shape( {
+			label: PropTypes.string.isRequired,
+			header: PropTypes.string,
+			getUrl: PropTypes.func,
+			action: PropTypes.func
+		} ) ),
+		defaultOption: PropTypes.string
+	},
 
 	getInitialState() {
 		return {
@@ -32,8 +42,9 @@ const ThemesLoggedOut = React.createClass( {
 	},
 
 	onPreviewButtonClick( theme ) {
+		const defaultOption = this.props.options[ this.props.defaultOption ];
 		this.setState( { showPreview: false }, () => {
-			this.props.signup( theme );
+			defaultOption.action( theme );
 		} );
 	},
 
@@ -45,18 +56,18 @@ const ThemesLoggedOut = React.createClass( {
 				label: actionLabels.preview.label,
 				action: theme => this.togglePreview( theme )
 			} }
-		);
+		),
+			defaultOption = this.props.options[ this.props.defaultOption ];
 
 		return (
 			<Main className="themes">
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
+				{ this.props.children }
 				{ this.state.showPreview &&
 					<ThemePreview showPreview={ this.state.showPreview }
 						theme={ this.state.previewingTheme }
 						onClose={ this.togglePreview }
-						buttonLabel={ this.translate( 'Choose this design', {
-							comment: 'when signing up for a WordPress.com account with a selected theme'
-						} ) }
+						buttonLabel={ defaultOption.label }
 						onButtonClick={ this.onPreviewButtonClick } />
 				}
 				<ThemesSelection search={ this.props.search }
@@ -115,6 +126,6 @@ export default connect(
 				}
 			},
 			actionLabels
-		) }
+		), defaultOption: 'signup' }
 	)
-)( ThemesLoggedOut );
+)( ThemeShowcase );
