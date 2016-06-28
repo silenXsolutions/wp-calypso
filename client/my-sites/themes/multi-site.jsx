@@ -44,35 +44,39 @@ export default connect(
 		{},
 		ownProps,
 		stateProps,
-		{ options: merge(
-			{},
-			mapValues( dispatchProps, action => ( { action } ) ),
-			{
-				purchase: config.isEnabled( 'upgrades/checkout' )
-					? {
-						hideForTheme: theme => ! theme.price
-					}
-					: {},
-				activate: {
-					hideForTheme: theme => theme.price
+		{
+			options: merge(
+				{},
+				mapValues( dispatchProps, action => ( { action } ) ),
+				{
+					purchase: config.isEnabled( 'upgrades/checkout' )
+						? {
+							hideForTheme: theme => ! theme.price
+						}
+						: {},
+					activate: {
+						hideForTheme: theme => theme.price
+					},
+					tryandcustomize: {},
+					separator: {
+						separator: true
+					},
+					info: {
+						getUrl: theme => getDetailsUrl( theme ),
+					},
+					support: {
+						getUrl: theme => getSupportUrl( theme ),
+						// Free themes don't have support docs.
+						hideForTheme: theme => ! isPremium( theme )
+					},
+					help: {
+						getUrl: theme => getHelpUrl( theme )
+					},
 				},
-				tryandcustomize: {},
-				separator: {
-					separator: true
-				},
-				info: {
-					getUrl: theme => getDetailsUrl( theme ),
-				},
-				support: {
-					getUrl: theme => getSupportUrl( theme ),
-					// Free themes don't have support docs.
-					hideForTheme: theme => ! isPremium( theme )
-				},
-				help: {
-					getUrl: theme => getHelpUrl( theme )
-				},
-			},
-			actionLabels
-		), defaultOption: 'tryandcustomize' }
+				actionLabels
+			),
+			defaultOption: 'tryandcustomize',
+			getScreenshotOption: () => 'info'
+		}
 	)
 )( ThemesMultiSite );
