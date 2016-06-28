@@ -142,12 +142,12 @@ describe( 'reducer', () => {
 				} );
 
 				expect( state ).to.eql( {
-					'post-save-success-trash': {
+					POST_SAVE_SUCCESS: {
 						showDismiss: true,
 						isPersistent: false,
 						displayOnNextPage: false,
 						status: 'is-success',
-						noticeId: 'post-save-success-trash',
+						noticeId: 'POST_SAVE_SUCCESS',
 						count: 1,
 						text: 'Post successfully moved to trash'
 					}
@@ -156,12 +156,12 @@ describe( 'reducer', () => {
 
 			it( 'should return state with multiple trash success', () => {
 				const original = deepFreeze( {
-					'post-save-success-trash': {
+					POST_SAVE_SUCCESS: {
 						showDismiss: true,
 						isPersistent: false,
 						displayOnNextPage: false,
 						status: 'is-success',
-						noticeId: 'post-save-success-trash',
+						noticeId: 'POST_SAVE_SUCCESS',
 						count: 1,
 						text: 'Post successfully moved to trash'
 					}
@@ -172,12 +172,12 @@ describe( 'reducer', () => {
 				} );
 
 				expect( state ).to.eql( {
-					'post-save-success-trash': {
+					POST_SAVE_SUCCESS: {
 						showDismiss: true,
 						isPersistent: false,
 						displayOnNextPage: false,
 						status: 'is-success',
-						noticeId: 'post-save-success-trash',
+						noticeId: 'POST_SAVE_SUCCESS',
 						count: 2,
 						text: '2 posts successfully moved to trash'
 					}

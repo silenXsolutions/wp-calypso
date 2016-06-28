@@ -57,7 +57,7 @@ export const items = createReducer( {}, {
 			return state;
 		}
 
-		const noticeId = `post-save-success-${ post.status }`;
+		const noticeId = action.type;
 
 		let count;
 		if ( state[ noticeId ] ) {
