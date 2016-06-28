@@ -31,6 +31,12 @@ export const ThemeShowcase = React.createClass( {
 		getScreenshotOption: PropTypes.func
 	},
 
+	getDefaultProps() {
+		return {
+			selectedSite: false
+		};
+	},
+
 	getInitialState() {
 		return {
 			showPreview: false,
@@ -73,7 +79,8 @@ export const ThemeShowcase = React.createClass( {
 						onButtonClick={ this.onPreviewButtonClick } />
 				}
 				<ThemesSelection search={ this.props.search }
-					selectedSite={ false }
+					siteId={ this.props.siteId }
+					selectedSite={ this.props.selectedSite }
 					getScreenshotUrl={ function( theme ) {
 						return getScreenshotOption( theme ).getUrl( theme );
 					} }

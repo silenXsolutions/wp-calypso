@@ -3,16 +3,15 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import { customize, purchase, activate } from 'state/themes/actions';
-import ThemePreview from './theme-preview';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -20,13 +19,11 @@ import config from 'config';
 import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
-import ThemesSelection from './themes-selection';
 import {
 	getDetailsUrl,
 	getSupportUrl,
 	getHelpUrl,
-	isPremium,
-	addTracking
+	isPremium
 } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
@@ -37,131 +34,59 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { ThemeShowcase } from './logged-out';
 
 const sites = sitesFactory();
 
-const ThemesSingleSite = React.createClass( {
-	propTypes: {
-		siteId: React.PropTypes.string,
-		tier: React.PropTypes.string,
-		search: React.PropTypes.string,
-		trackScrollPage: React.PropTypes.func,
-		// Connected Props
-		queryParams: React.PropTypes.object,
-		themesList: React.PropTypes.array
-	},
+const ThemesSingleSite = ( props ) => {
+	const site = sites.getSelectedSite(),
+		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
+		jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
-	getInitialState() {
-		return {
-			selectedTheme: null,
-			selectedAction: null,
-			showPreview: null,
-			previewingTheme: null,
-		};
-	},
+	if ( isJetpack && jetpackEnabled && ! site.hasJetpackThemes ) {
+		return <JetpackUpgradeMessage site={ site } />;
+	}
 
-	togglePreview( theme ) {
-		const site = sites.getSelectedSite();
-		if ( site.jetpack ) {
-			this.props.customize( theme );
-		} else {
-			this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
-		}
-	},
+	if ( isJetpack && jetpackEnabled && ! site.canManage() ) {
+		return <JetpackManageDisabledMessage site={ site } />;
+	}
 
-	onPreviewButtonClick( theme ) {
-		const defaultOption = this.props.options[ this.props.defaultOption ];
-		this.setState( { showPreview: false }, () => {
-			defaultOption.action( theme );
-		} );
-	},
-
-	renderJetpackMessage() {
-		const site = sites.getSelectedSite();
-		return (
-			<EmptyContent title={ this.translate( 'Changing Themes?' ) }
-				line={ this.translate( 'Use your site theme browser to manage themes.' ) }
-				action={ this.translate( 'Open Site Theme Browser' ) }
-				actionURL={ site.options.admin_url + 'themes.php' }
-				actionTarget="_blank"
-				illustration="/calypso/images/drake/drake-jetpack.svg" />
-		);
-	},
-
-	render() {
-		const site = sites.getSelectedSite(),
-			{ isJetpack } = this.props,
-			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
-			buttonOptions = merge(
-				{},
-				this.props.options,
-				{ preview: {
-					label: actionLabels.preview.label,
-					action: theme => this.togglePreview( theme )
-				} }
-			),
-			defaultOption = this.props.options[ this.props.defaultOption ],
-			getScreenshotAction = function( theme ) {
-				return buttonOptions[ theme.active ? 'customize' : 'info' ];
-			};
-
-		if ( isJetpack && jetpackEnabled && ! site.hasJetpackThemes ) {
-			return <JetpackUpgradeMessage site={ site } />;
-		}
-
-		if ( isJetpack && jetpackEnabled && ! site.canManage() ) {
-			return <JetpackManageDisabledMessage site={ site } />;
-		}
-
+	if ( isJetpack && ! jetpackEnabled ) {
 		return (
 			<Main className="themes">
-				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
+				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
 				<SidebarNavigation />
-				{ this.state.showPreview &&
-					<ThemePreview showPreview={ this.state.showPreview }
-						theme={ this.state.previewingTheme }
-						onClose={ this.togglePreview }
-						buttonLabel={ defaultOption.label }
-						onButtonClick={ this.onPreviewButtonClick } />
-				}
-				<ThanksModal
-					site={ site }
-					source={ 'list' }/>
 				<CurrentTheme
 					site={ site }
 					canCustomize={ site && site.isCustomizable() } />
-				<UpgradeNudge
-					title={ this.translate( 'Get Custom Design with Premium' ) }
-					message={ this.translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
-					feature={ FEATURE_CUSTOM_DESIGN }
-					event="themes_custom_design"
-				/>
-				{ isJetpack && ! jetpackEnabled
-				? this.renderJetpackMessage()
-				: <ThemesSelection search={ this.props.search }
-						key={ site.ID }
-						siteId={ this.props.siteId }
-						selectedSite={ site }
-						getScreenshotUrl={ function( theme ) {
-							return getScreenshotAction( theme ).getUrl( theme );
-						} }
-						getActionLabel={ function( theme ) {
-							return getScreenshotAction( theme ).label;
-						} }
-						getOptions={ function( theme ) {
-							return pickBy(
-								addTracking( buttonOptions ),
-								option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
-							); } }
-						trackScrollPage={ this.props.trackScrollPage }
-						tier={ this.props.tier }
-						queryParams={ this.props.queryParams }
-						themesList={ this.props.themesList } />
-				}
+				<EmptyContent title={ translate( 'Changing Themes?' ) }
+					line={ translate( 'Use your site theme browser to manage themes.' ) }
+					action={ translate( 'Open Site Theme Browser' ) }
+					actionURL={ site.options.admin_url + 'themes.php' }
+					actionTarget="_blank"
+					illustration="/calypso/images/drake/drake-jetpack.svg" />
 			</Main>
 		);
 	}
-} );
+
+	return (
+		<ThemeShowcase { ...props }>
+			<SidebarNavigation />
+			<ThanksModal
+				site={ site }
+				source={ 'list' }/>
+			<CurrentTheme
+				site={ site }
+				canCustomize={ site && site.isCustomizable() } />
+			<UpgradeNudge
+				title={ translate( 'Get Custom Design with Premium' ) }
+				message={ translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
+				feature={ FEATURE_CUSTOM_DESIGN }
+				event="themes_custom_design"
+			/>
+		</ThemeShowcase>
+	);
+};
 
 export default connect(
 	state => {
@@ -186,50 +111,54 @@ export default connect(
 			{},
 			ownProps,
 			stateProps,
-			{ options: merge(
-				{},
-				mapValues( dispatchProps, action => theme => action( theme, site, 'showcase' ) ),
-				{
-					customize: isCustomizable
-						? {
-							hideForTheme: theme => ! theme.active
-						}
-						: {},
-					preview: {
-						hideForTheme: theme => theme.active
+			{
+				options: merge(
+					{},
+					mapValues( dispatchProps, action => theme => action( theme, site, 'showcase' ) ),
+					{
+						customize: isCustomizable
+							? {
+								hideForTheme: theme => ! theme.active
+							}
+							: {},
+						preview: {
+							hideForTheme: theme => theme.active
+						},
+						purchase: config.isEnabled( 'upgrades/checkout' )
+							? {
+								hideForTheme: theme => theme.active || theme.purchased || ! theme.price
+							}
+							: {},
+						activate: {
+							hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
+						},
+						tryandcustomize: {
+							action: theme => dispatchProps.customize( theme, site, 'showcase' ),
+							hideForTheme: theme => theme.active
+						},
+						separator: {
+							separator: true
+						},
+						info: {
+							getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
+						},
+						support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+							? {
+								getUrl: theme => getSupportUrl( theme, site ),
+								hideForTheme: theme => ! isPremium( theme )
+							}
+							: {},
+						help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
+							? {
+								getUrl: theme => getHelpUrl( theme, site )
+							}
+							: {},
 					},
-					purchase: config.isEnabled( 'upgrades/checkout' )
-						? {
-							hideForTheme: theme => theme.active || theme.purchased || ! theme.price
-						}
-						: {},
-					activate: {
-						hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
-					},
-					tryandcustomize: {
-						action: theme => dispatchProps.customize( theme, site, 'showcase' ),
-						hideForTheme: theme => theme.active
-					},
-					separator: {
-						separator: true
-					},
-					info: {
-						getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
-					},
-					support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
-						? {
-							getUrl: theme => getSupportUrl( theme, site ),
-							hideForTheme: theme => ! isPremium( theme )
-						}
-						: {},
-					help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
-						? {
-							getUrl: theme => getHelpUrl( theme, site )
-						}
-						: {},
-				},
-				actionLabels
-			), defaultOption: 'customize' }
+					actionLabels
+				),
+				defaultOption: 'customize',
+				getScreenshotOption: theme => theme.active ? 'customize' : 'info'
+			}
 		);
 	}
-)( ThemesSingleSite );
+)( localize( ThemesSingleSite ) );
