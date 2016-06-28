@@ -43,30 +43,30 @@ const ThemesSingleSite = ( props ) => {
 		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
 		jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
-	if ( isJetpack && jetpackEnabled && ! site.hasJetpackThemes ) {
-		return <JetpackUpgradeMessage site={ site } />;
-	}
-
-	if ( isJetpack && jetpackEnabled && ! site.canManage() ) {
-		return <JetpackManageDisabledMessage site={ site } />;
-	}
-
-	if ( isJetpack && ! jetpackEnabled ) {
-		return (
-			<Main className="themes">
-				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
-				<SidebarNavigation />
-				<CurrentTheme
-					site={ site }
-					canCustomize={ site && site.isCustomizable() } />
-				<EmptyContent title={ translate( 'Changing Themes?' ) }
-					line={ translate( 'Use your site theme browser to manage themes.' ) }
-					action={ translate( 'Open Site Theme Browser' ) }
-					actionURL={ site.options.admin_url + 'themes.php' }
-					actionTarget="_blank"
-					illustration="/calypso/images/drake/drake-jetpack.svg" />
-			</Main>
-		);
+	if ( isJetpack ) {
+		if ( ! jetpackEnabled ) {
+			return (
+				<Main className="themes">
+					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
+					<SidebarNavigation />
+					<CurrentTheme
+						site={ site }
+						canCustomize={ site && site.isCustomizable() } />
+					<EmptyContent title={ translate( 'Changing Themes?' ) }
+						line={ translate( 'Use your site theme browser to manage themes.' ) }
+						action={ translate( 'Open Site Theme Browser' ) }
+						actionURL={ site.options.admin_url + 'themes.php' }
+						actionTarget="_blank"
+						illustration="/calypso/images/drake/drake-jetpack.svg" />
+				</Main>
+			);
+		}
+		if ( ! site.hasJetpackThemes ) {
+			return <JetpackUpgradeMessage site={ site } />;
+		}
+		if ( ! site.canManage() ) {
+			return <JetpackManageDisabledMessage site={ site } />;
+		}
 	}
 
 	return (
