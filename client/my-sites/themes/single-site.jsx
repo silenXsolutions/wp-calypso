@@ -38,6 +38,24 @@ import { ThemeShowcase } from './logged-out';
 
 const sites = sitesFactory();
 
+const JetpackThemeReferrerPage = localize(
+	( { translate, site, analyticsPath, analyticsPageTitle } ) => (
+		<Main className="themes">
+			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
+			<SidebarNavigation />
+			<CurrentTheme
+				site={ site }
+				canCustomize={ site && site.isCustomizable() } />
+			<EmptyContent title={ translate( 'Changing Themes?' ) }
+				line={ translate( 'Use your site theme browser to manage themes.' ) }
+				action={ translate( 'Open Site Theme Browser' ) }
+				actionURL={ site.options.admin_url + 'themes.php' }
+				actionTarget="_blank"
+				illustration="/calypso/images/drake/drake-jetpack.svg" />
+		</Main>
+	)
+);
+
 const ThemesSingleSite = ( props ) => {
 	const site = sites.getSelectedSite(),
 		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
@@ -46,19 +64,9 @@ const ThemesSingleSite = ( props ) => {
 	if ( isJetpack ) {
 		if ( ! jetpackEnabled ) {
 			return (
-				<Main className="themes">
-					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
-					<SidebarNavigation />
-					<CurrentTheme
-						site={ site }
-						canCustomize={ site && site.isCustomizable() } />
-					<EmptyContent title={ translate( 'Changing Themes?' ) }
-						line={ translate( 'Use your site theme browser to manage themes.' ) }
-						action={ translate( 'Open Site Theme Browser' ) }
-						actionURL={ site.options.admin_url + 'themes.php' }
-						actionTarget="_blank"
-						illustration="/calypso/images/drake/drake-jetpack.svg" />
-				</Main>
+				<JetpackThemeReferrerPage site={ site }
+					analyticsPath={ analyticsPath }
+					analyticsPageTitle={ analyticsPageTitle }/>
 			);
 		}
 		if ( ! site.hasJetpackThemes ) {
