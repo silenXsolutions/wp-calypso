@@ -77,6 +77,11 @@ describe( 'selectors', () => {
 			path: '/design/77203074',
 		};
 
+		const navigateToTest = {
+			type: 'ROUTE_SET',
+			path: '/test',
+		};
+
 		const themesTourSeen = {
 			tourName: 'themes',
 			timestamp: 1337,
@@ -115,7 +120,23 @@ describe( 'selectors', () => {
 
 			expect( tour ).to.equal( 'main' );
 		} );
-		xit( 'should pick a tour based on the most recent actions', () => {
+		describe( 'picking a tour based on the most recent actions', () => {
+			it( 'should pick `themes`', () => {
+				const state = makeState( {
+					actionLog: [ navigateToThemes, navigateToTest ]
+				} );
+				const tour = findEligibleTour( state );
+
+				expect( tour ).to.equal( 'test' );
+			} );
+			it( 'should pick `test`', () => {
+				const state = makeState( {
+					actionLog: [ navigateToTest, navigateToThemes ]
+				} );
+				const tour = findEligibleTour( state );
+
+				expect( tour ).to.equal( 'themes' );
+			} );
 		} );
 	} );
 } );

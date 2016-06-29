@@ -6,6 +6,7 @@ import difference from 'lodash/difference';
 import find from 'lodash/find';
 import memoize from 'lodash/memoize';
 import noop from 'lodash/noop';
+import reverse from 'lodash/reverse';
 import startsWith from 'lodash/startsWith';
 import uniq from 'lodash/uniq';
 
@@ -37,11 +38,16 @@ const relevantFeatures = [
 		tour: 'themes',
 		context: () => true,
 	},
+	{
+		path: '/test',
+		tour: 'test',
+		context: () => true,
+	},
 ];
 
 const getToursFromFeaturesReached = createSelector(
-	state => (
-		uniq( getActionLog( state )
+	state => reverse( uniq(
+		getActionLog( state )
 			.filter( ( { type } ) => type === ROUTE_SET )
 			.reduce( ( allTours, { path: triggerPath } ) => {
 				const newTours = relevantFeatures
