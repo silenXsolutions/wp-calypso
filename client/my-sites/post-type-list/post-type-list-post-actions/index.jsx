@@ -8,6 +8,7 @@ import React, { PropTypes } from 'react';
  */
 import EllipsisMenu from 'components/ellipsis-menu';
 import PostTypeListPostActionsEdit from './edit';
+import PostTypeListPostActionsPublish from './publish';
 import PostTypeListPostActionsTrash from './trash';
 import PostTypeListPostActionsView from './view';
 import PostTypeListPostActionsRestore from './restore';
@@ -17,6 +18,7 @@ export default function PostTypeListPostActions( { globalId } ) {
 		<div className="post-type-list-post-actions">
 			<EllipsisMenu position="bottom left">
 				<PostTypeListPostActionsView globalId={ globalId } />
+				<PostTypeListPostActionsPublish globalId={ globalId } />
 				<PostTypeListPostActionsEdit globalId={ globalId } />
 				<PostTypeListPostActionsRestore globalId={ globalId } />
 				<PostTypeListPostActionsTrash globalId={ globalId } />
