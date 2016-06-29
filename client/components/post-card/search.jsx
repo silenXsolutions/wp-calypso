@@ -13,6 +13,8 @@ import Card from 'components/card';
 import AuthorAndSite from './author-and-site';
 import PostTime from 'reader/post-time';
 import FollowButton from 'reader/follow-button';
+import LikeButton from 'reader/like-button';
+import CommentButton from 'components/comment-button';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -49,6 +51,10 @@ export function SearchPostCard( { post, site, feed, onClick = noop } ) {
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
 		{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
 		<h1 className="post-card__search-title">{ post.title }</h1>
+		<div className="post-card__search-social">
+			<CommentButton commentCount={ post.discussion.comment_count } tagName="span" showLabel={ false }/>
+			<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showCount={ true } showLabel={ false } />
+		</div>
 		<div className="post-card__search-byline">
 			<SearchByline post={ post } site={ site } feed={ feed } />
 		</div>

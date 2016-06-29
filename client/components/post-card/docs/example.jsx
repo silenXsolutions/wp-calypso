@@ -90,11 +90,15 @@ const searchItems = [
 			title: 'A first post',
 			content: 'Look, I have content!',
 			site_ID: 1,
+			site_URL: 'http://example.com',
 			feed_ID: 1,
 			feed_item_ID: 1,
 			author: {
 				name: 'Sue Smith',
 				email: 'sue@example.com'
+			},
+			discussion: {
+				comment_count: 15
 			},
 			canonical_image: {
 				uri: 'https://placekitten.com/600/400',
