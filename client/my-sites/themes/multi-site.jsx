@@ -49,6 +49,7 @@ export default connect(
 				{},
 				mapValues( dispatchProps, action => ( { action } ) ),
 				{
+					preview: {},
 					purchase: config.isEnabled( 'upgrades/checkout' )
 						? {
 							hideForTheme: theme => ! theme.price
