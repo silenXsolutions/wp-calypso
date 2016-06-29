@@ -129,9 +129,14 @@ export default connect(
 								hideForTheme: theme => ! theme.active
 							}
 							: {},
-						preview: {
-							hideForTheme: theme => theme.active
-						},
+						preview: isJetpack
+							? {
+								action: theme => dispatchProps.customize( theme, site, 'showcase' ),
+								hideForTheme: theme => theme.active
+							}
+							: {
+								hideForTheme: theme => theme.active
+							},
 						purchase: config.isEnabled( 'upgrades/checkout' )
 							? {
 								hideForTheme: theme => theme.active || theme.purchased || ! theme.price

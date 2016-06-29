@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -56,14 +57,20 @@ export const ThemeShowcase = React.createClass( {
 	},
 
 	render() {
-		const buttonOptions = merge(
-			{},
+		// If a preview action is passed, use that. Otherwise, use our own.
+		const previewAction = get(
 			this.props.options,
-			{ preview: {
-				label: actionLabels.preview.label,
-				action: theme => this.togglePreview( theme )
-			} }
+			[ 'preview', 'action' ],
+			theme => this.togglePreview( theme )
 		),
+			buttonOptions = merge(
+				{},
+				this.props.options,
+				{ preview: {
+					label: actionLabels.preview.label,
+					action: previewAction
+				} }
+			),
 			defaultOption = this.props.options[ this.props.defaultOption ],
 			getScreenshotOption = theme => buttonOptions[ this.props.getScreenshotOption( theme ) ];
 
