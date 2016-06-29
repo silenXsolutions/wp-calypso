@@ -40,7 +40,6 @@ import {
 import { isJetpack } from './themes-last-query/selectors';
 import { getQueryParams } from './themes-list/selectors';
 import { getThemeById } from './themes/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 import wpcom from 'lib/wp';
 
 export function fetchThemes( site ) {
@@ -166,7 +165,7 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 		const themeAction = {
 			type: THEMES_RECEIVE,
 			siteId: site.ID,
-			isJetpack: isJetpackSite( getState(), site.ID ),
+			isJetpack: !! site.jetpack,
 			wasJetpack: isJetpack( getState() ),
 			themes: data.themes,
 			found: data.found,
