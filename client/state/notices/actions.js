@@ -36,10 +36,11 @@ export function createNotice( status, text, options = {} ) {
 	};
 }
 
-export function setRoute( path ) {
+export function setRoute( path, query = {} ) {
 	return {
 		type: ROUTE_SET,
-		path: path
+		path,
+		query,
 	};
 }
 

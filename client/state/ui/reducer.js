@@ -10,6 +10,7 @@ import {
 	SELECTED_SITE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
+	ROUTE_SET,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -86,11 +87,16 @@ export const isPreviewShowing = createReducer( false, {
 		isShowing !== undefined ? isShowing : state,
 } );
 
+export const queryArguments = createReducer( {}, {
+	[ ROUTE_SET ]: ( state, { query } ) => query,
+} );
+
 const reducer = combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
 	isPreviewShowing,
+	queryArguments,
 	selectedSiteId,
 	recentlySelectedSiteIds,
 	guidedTour,

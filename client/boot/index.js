@@ -357,7 +357,9 @@ function reduxStoreReady( reduxStore ) {
 
 	// clear notices
 	page( '*', function( context, next ) {
-		context.store.dispatch( setRouteAction( context.pathname ) );
+		context.store.dispatch( setRouteAction(
+					context.pathname,
+					context.query ) );
 		next();
 	} );
 

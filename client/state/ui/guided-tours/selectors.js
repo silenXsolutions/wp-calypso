@@ -13,7 +13,7 @@ import uniq from 'lodash/uniq';
  * Internal dependencies
  */
 import { ROUTE_SET } from 'state/action-types';
-import { isSectionLoading } from 'state/ui/selectors';
+import { isSectionLoading, getQueryArguments } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
 import createSelector from 'lib/create-selector';
@@ -29,13 +29,13 @@ const relevantFeatures = [
 	{
 		path: '/',
 		tour: 'main',
-		// obviously a hack
-		context: () => -1 !== location.search.indexOf( 'tour=main' )
+		// TODO(mcsf): allow all tours to use qargs
+		context: state => getQueryArguments( state ).tour === 'main',
 	},
 	{
 		path: '/design',
 		tour: 'themes',
-		context: state => true // eslint-disable-line no-unused-vars
+		context: () => true,
 	},
 ];
 
