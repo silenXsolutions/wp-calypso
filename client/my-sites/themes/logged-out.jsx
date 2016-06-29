@@ -82,6 +82,9 @@ export const ThemeShowcase = React.createClass( {
 					siteId={ this.props.siteId }
 					selectedSite={ this.props.selectedSite }
 					getScreenshotUrl={ function( theme ) {
+						if ( ! getScreenshotOption( theme ).getUrl ) {
+							return null;
+						}
 						return getScreenshotOption( theme ).getUrl( theme );
 					} }
 					onScreenshotClick={ function( theme ) {
