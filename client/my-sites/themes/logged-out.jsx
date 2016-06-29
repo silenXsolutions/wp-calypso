@@ -85,6 +85,9 @@ export const ThemeShowcase = React.createClass( {
 						return getScreenshotOption( theme ).getUrl( theme );
 					} }
 					onScreenshotClick={ function( theme ) {
+						if ( ! getScreenshotOption( theme ).action ) {
+							return;
+						}
 						getScreenshotOption( theme ).action( theme );
 					} }
 					getActionLabel={ function( theme ) {
