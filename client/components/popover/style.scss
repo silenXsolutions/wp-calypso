@@ -137,7 +137,6 @@
 	background: inherit;
 	border: none;
 	border-radius: 0;
-	color: $gray-dark;
 	cursor: pointer;
 	display: block;
 	font-size: 14px;
@@ -151,6 +150,11 @@
 
 	&:first-child {
 		margin-top: 5px;
+	}
+
+	&,
+	&:visited {
+		color: $gray-dark;
 	}
 
 	&:hover,
