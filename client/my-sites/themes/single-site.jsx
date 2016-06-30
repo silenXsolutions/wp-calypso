@@ -169,7 +169,7 @@ export default connect(
 					},
 					actionLabels
 				),
-				defaultOption: 'customize',
+				defaultOption: 'tryandcustomize',
 				getScreenshotOption: theme => theme.active ? 'customize' : 'info'
 			}
 		);
