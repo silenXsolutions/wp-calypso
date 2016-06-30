@@ -103,6 +103,70 @@ const ThemesSingleSite = ( props ) => {
 	);
 };
 
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const { selectedSite: site, isCustomizable, isJetpack } = stateProps;
+
+	return Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		{
+			options: merge(
+				{},
+				mapValues( dispatchProps, actionFn => ( {
+					action: theme => actionFn( theme, site, 'showcase' )
+				} ) ),
+				{
+					customize: isCustomizable
+						? {
+							hideForTheme: theme => ! theme.active
+						}
+						: {},
+					preview: isJetpack
+						? {
+							action: theme => dispatchProps.customize( theme, site, 'showcase' ),
+							hideForTheme: theme => theme.active
+						}
+						: {
+							hideForTheme: theme => theme.active
+						},
+					purchase: config.isEnabled( 'upgrades/checkout' )
+						? {
+							hideForTheme: theme => theme.active || theme.purchased || ! theme.price
+						}
+						: {},
+					activate: {
+						hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
+					},
+					tryandcustomize: {
+						hideForTheme: theme => theme.active
+					},
+					separator: {
+						separator: true
+					},
+					info: {
+						getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
+					},
+					support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+						? {
+							getUrl: theme => getSupportUrl( theme, site ),
+							hideForTheme: theme => ! isPremium( theme )
+						}
+						: {},
+					help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
+						? {
+							getUrl: theme => getHelpUrl( theme, site )
+						}
+						: {},
+				},
+				actionLabels
+			),
+			defaultOption: 'tryandcustomize',
+			getScreenshotOption: theme => theme.active ? 'customize' : 'info'
+		}
+	);
+};
+
 export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
@@ -120,67 +184,5 @@ export default connect(
 		purchase,
 		tryandcustomize: customize,
 	},
-	( stateProps, dispatchProps, ownProps ) => {
-		const { selectedSite: site, isCustomizable, isJetpack } = stateProps;
-
-		return Object.assign(
-			{},
-			ownProps,
-			stateProps,
-			{
-				options: merge(
-					{},
-					mapValues( dispatchProps, actionFn => ( {
-						action: theme => actionFn( theme, site, 'showcase' )
-					} ) ),
-					{
-						customize: isCustomizable
-							? {
-								hideForTheme: theme => ! theme.active
-							}
-							: {},
-						preview: isJetpack
-							? {
-								action: theme => dispatchProps.customize( theme, site, 'showcase' ),
-								hideForTheme: theme => theme.active
-							}
-							: {
-								hideForTheme: theme => theme.active
-							},
-						purchase: config.isEnabled( 'upgrades/checkout' )
-							? {
-								hideForTheme: theme => theme.active || theme.purchased || ! theme.price
-							}
-							: {},
-						activate: {
-							hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
-						},
-						tryandcustomize: {
-							hideForTheme: theme => theme.active
-						},
-						separator: {
-							separator: true
-						},
-						info: {
-							getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
-						},
-						support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
-							? {
-								getUrl: theme => getSupportUrl( theme, site ),
-								hideForTheme: theme => ! isPremium( theme )
-							}
-							: {},
-						help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
-							? {
-								getUrl: theme => getHelpUrl( theme, site )
-							}
-							: {},
-					},
-					actionLabels
-				),
-				defaultOption: 'tryandcustomize',
-				getScreenshotOption: theme => theme.active ? 'customize' : 'info'
-			}
-		);
-	}
+	mergeProps
 )( localize( ThemesSingleSite ) );

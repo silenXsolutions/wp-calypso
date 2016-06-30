@@ -30,6 +30,49 @@ const ThemesMultiSite = ( props ) => (
 	</ThemesSiteSelectorModal>
 );
 
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
+	{},
+	ownProps,
+	stateProps,
+	{
+		options: merge(
+			{},
+			mapValues( dispatchProps, actionFn => ( {
+				action: ( theme, site ) => actionFn( theme, site, 'showcase' )
+			} ) ),
+			{
+				preview: {},
+				purchase: config.isEnabled( 'upgrades/checkout' )
+					? {
+						hideForTheme: theme => ! theme.price
+					}
+					: {},
+				activate: {
+					hideForTheme: theme => theme.price
+				},
+				tryandcustomize: {},
+				separator: {
+					separator: true
+				},
+				info: {
+					getUrl: theme => getDetailsUrl( theme ),
+				},
+				support: {
+					getUrl: theme => getSupportUrl( theme ),
+					// Free themes don't have support docs.
+					hideForTheme: theme => ! isPremium( theme )
+				},
+				help: {
+					getUrl: theme => getHelpUrl( theme )
+				},
+			},
+			actionLabels
+		),
+		defaultOption: 'tryandcustomize',
+		getScreenshotOption: () => 'info'
+	}
+);
+
 export default connect(
 	state => ( {
 		queryParams: getQueryParams( state ),
@@ -40,46 +83,5 @@ export default connect(
 		tryandcustomize,
 		purchase
 	},
-	( stateProps, dispatchProps, ownProps ) => Object.assign(
-		{},
-		ownProps,
-		stateProps,
-		{
-			options: merge(
-				{},
-				mapValues( dispatchProps, actionFn => ( {
-					action: ( theme, site ) => actionFn( theme, site, 'showcase' )
-				} ) ),
-				{
-					preview: {},
-					purchase: config.isEnabled( 'upgrades/checkout' )
-						? {
-							hideForTheme: theme => ! theme.price
-						}
-						: {},
-					activate: {
-						hideForTheme: theme => theme.price
-					},
-					tryandcustomize: {},
-					separator: {
-						separator: true
-					},
-					info: {
-						getUrl: theme => getDetailsUrl( theme ),
-					},
-					support: {
-						getUrl: theme => getSupportUrl( theme ),
-						// Free themes don't have support docs.
-						hideForTheme: theme => ! isPremium( theme )
-					},
-					help: {
-						getUrl: theme => getHelpUrl( theme )
-					},
-				},
-				actionLabels
-			),
-			defaultOption: 'tryandcustomize',
-			getScreenshotOption: () => 'info'
-		}
-	)
+	mergeProps
 )( ThemesMultiSite );
