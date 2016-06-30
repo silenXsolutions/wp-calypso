@@ -6,11 +6,6 @@
 import i18n from 'i18n-calypso';
 
 export default {
-	signup: {
-		label: i18n.translate( 'Pick this design', {
-			comment: 'when signing up for a WordPress.com account with a selected theme'
-		} )
-	},
 	purchase: {
 		label: i18n.translate( 'Purchase', {
 			context: 'verb'
