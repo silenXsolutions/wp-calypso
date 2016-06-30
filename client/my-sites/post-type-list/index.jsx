@@ -15,7 +15,6 @@ import VirtualScroll from 'react-virtualized/VirtualScroll';
  * Internal dependencies
  */
 import QueryPosts from 'components/data/query-posts';
-import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSitePostsForQuery,
@@ -154,7 +153,6 @@ class PostTypeList extends Component {
 						siteId={ siteId }
 						query={ { ...query, page } } />
 				) ) }
-				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				{ isEmpty && (
 					<PostTypeListEmptyContent
 						type={ query.type }

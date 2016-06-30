@@ -10,16 +10,18 @@ import get from 'lodash/get';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
+import QueryPostTypes from 'components/data/query-post-types';
 import { getPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 
-function PostTypeListPostActionsView( { translate, label, status, url } ) {
+function PostTypeListPostActionsView( { translate, siteId, label, status, url } ) {
 	if ( 'trash' === status ) {
 		return null;
 	}
 
 	return (
 		<PopoverMenuItem href={ url } icon="external" target="_blank">
+			{ siteId && <QueryPostTypes siteId={ siteId } /> }
 			{ label || translate( 'View', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
@@ -28,6 +30,7 @@ function PostTypeListPostActionsView( { translate, label, status, url } ) {
 PostTypeListPostActionsView.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
+	siteId: PropTypes.number,
 	label: PropTypes.string,
 	status: PropTypes.string,
 	url: PropTypes.string
@@ -40,6 +43,7 @@ export default connect( ( state, ownProps ) => {
 	}
 
 	return {
+		siteId: post.site_ID,
 		label: get( getPostType( state, post.site_ID, post.type ), 'labels.view_item' ),
 		status: post.status,
 		url: post.URL
