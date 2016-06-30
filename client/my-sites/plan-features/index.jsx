@@ -56,15 +56,15 @@ class PlanFeatures extends Component {
 		return (
 			<div className={ classes } >
 				<PlanFeaturesHeader
-					current={ current }
-					currencyCode={ currencyCode }
-					popular={ popular }
-					title={ planConstantObj.getTitle() }
-					planType={ planName }
-					rawPrice={ rawPrice }
-					discountPrice={ discountPrice }
 					billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
+					currencyCode={ currencyCode }
+					current={ current }
+					discountPrice={ discountPrice }
 					onClick={ onUpgradeClick }
+					planType={ planName }
+					popular={ popular }
+					rawPrice={ rawPrice }
+					title={ planConstantObj.getTitle() }
 				/>
 				<PlanFeaturesItemList>
 					{
@@ -75,8 +75,7 @@ class PlanFeatures extends Component {
 				</PlanFeaturesItemList>
 				<PlanFeaturesFooter
 					current={ current }
-					available = { available }
-					description={ planConstantObj.getDescription() }
+					available={ available }
 					onUpgradeClick={ onUpgradeClick }
 				/>
 			</div>
@@ -108,6 +107,7 @@ export default connect( ( state, ownProps ) => {
 	const planObject = getPlan( state, planProductId );
 	const isPaid = isCurrentPlanPaid( state, selectedSiteId );
 	const showMonthly = ! isMonthly( ownProps.plan );
+	const available = canUpgradeToPlan( ownProps.plan );
 
 	return {
 		planName: ownProps.plan,
@@ -117,12 +117,15 @@ export default connect( ( state, ownProps ) => {
 		features: getPlanFeaturesObject( ownProps.plan ),
 		rawPrice: getPlanRawPrice( state, planProductId, showMonthly ),
 		planConstantObj: plansList[ ownProps.plan ],
-		available : canUpgradeToPlan( ownProps.plan ),
+		available,
 		onUpgradeClick: () => {
+			if ( ! available ) {
+				return;
+			}
 			const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 			page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( ownProps.plan ) || '' }` );
 		},
-		planObject: planObject,
+		planObject,
 		discountPrice: getPlanDiscountPrice( state, selectedSiteId, ownProps.plan, showMonthly )
 	};
 } )( PlanFeatures );
