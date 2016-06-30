@@ -16,6 +16,7 @@ var start = Date.now(),
 	host = process.env.HOST || config( 'hostname' ),
 	app = boot(),
 	server,
+	compiler,
 	hotReloader;
 
 console.log( chalk.yellow( '%s booted in %dms - http://%s:%s' ), pkg.name, ( Date.now() ) - start, host, port );
@@ -38,5 +39,17 @@ if ( process.env.CALYPSO_IS_FORK ) {
 // Enable hot reloader in development
 if ( config( 'env' ) === 'development' ) {
 	hotReloader = require( 'bundler/hot-reloader' );
-	hotReloader.listen( server, app.get( 'compiler' ) );
+	compiler = app.get( 'compiler' );
+
+	compiler.plugin( 'compile', function() {
+		process.send( { boot: 'compiling' } );
+	} );
+	compiler.plugin( 'invalid', function() {
+		process.send( { boot: 'invalid' } );
+	} );
+	compiler.plugin( 'done', function() {
+		process.send( { boot: 'ready' } );
+	} );
+
+	hotReloader.listen( server, compiler );
 }
