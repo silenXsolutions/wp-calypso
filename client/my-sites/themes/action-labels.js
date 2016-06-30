@@ -11,11 +11,6 @@ export default {
 			comment: 'when signing up for a WordPress.com account with a selected theme'
 		} )
 	},
-	preview: {
-		label: i18n.translate( 'Live demo', {
-			comment: 'label for previewing the theme demo website'
-		} )
-	},
 	purchase: {
 		label: i18n.translate( 'Purchase', {
 			context: 'verb'

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
 import get from 'lodash/get';
@@ -14,7 +15,6 @@ import ThemePreview from './theme-preview';
 import ThemesSelection from './themes-selection';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking } from './helpers';
-import actionLabels from './action-labels';
 
 const ThemeShowcase = React.createClass( {
 	propTypes: {
@@ -64,7 +64,9 @@ const ThemeShowcase = React.createClass( {
 			{},
 			this.props.options,
 			{ preview: {
-				label: actionLabels.preview.label,
+				label: this.props.translate( 'Live demo', {
+					comment: 'label for previewing the theme demo website'
+				} ),
 				action: previewAction
 			} }
 		);
@@ -114,4 +116,4 @@ const ThemeShowcase = React.createClass( {
 	}
 } );
 
-export default ThemeShowcase;
+export default localize( ThemeShowcase );
