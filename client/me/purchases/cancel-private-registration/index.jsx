@@ -148,7 +148,10 @@ const CancelPrivateRegistration = React.createClass( {
 		if ( purchase.error ) {
 			return <Notice status="is-error" showDismiss={ false }>
 				{ purchase.error }
-				Please try again later or <a href={ CALYPSO_CONTACT }>contact support.</a>
+				{ ' ' }
+				{ this.translate( 'Please try again later or {{a}}contact support.{{/a}}', {
+					components: { a: <a href={ CALYPSO_CONTACT } /> }
+				} ) }
 			</Notice>;
 		}
 
