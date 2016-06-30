@@ -13,7 +13,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 
-function PostTypeListPostActionsPublish( { translate, status, canPublish, dispatchPublishPost } ) {
+function PostActionsEllipsisMenuPublish( { translate, status, canPublish, dispatchPublishPost } ) {
 	if ( ! canPublish || ! includes( [ 'pending', 'draft' ], status ) ) {
 		return null;
 	}
@@ -25,7 +25,7 @@ function PostTypeListPostActionsPublish( { translate, status, canPublish, dispat
 	);
 }
 
-PostTypeListPostActionsPublish.propTypes = {
+PostActionsEllipsisMenuPublish.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	status: PropTypes.string,
@@ -48,4 +48,4 @@ export default connect(
 	() => ( {
 		dispatchPublishPost: () => alert( 'Not Yet Implemented' )
 	} )
-)( localize( PostTypeListPostActionsPublish ) );
+)( localize( PostActionsEllipsisMenuPublish ) );

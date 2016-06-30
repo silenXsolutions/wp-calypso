@@ -12,7 +12,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
 import { getCurrentUserId, canCurrentUser } from 'state/current-user/selectors';
 
-function PostTypeListPostActionsRestore( { translate, canRestore, dispatchRestorePost, status } ) {
+function PostActionsEllipsisMenuRestore( { translate, canRestore, dispatchRestorePost, status } ) {
 	if ( 'trash' !== status || ! canRestore ) {
 		return null;
 	}
@@ -24,7 +24,7 @@ function PostTypeListPostActionsRestore( { translate, canRestore, dispatchRestor
 	);
 }
 
-PostTypeListPostActionsRestore.propTypes = {
+PostActionsEllipsisMenuRestore.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	canRestore: PropTypes.bool,
@@ -50,4 +50,4 @@ export default connect(
 	() => ( {
 		dispatchRestorePost: () => alert( 'Not Yet Implemented' )
 	} )
-)( localize( PostTypeListPostActionsRestore ) );
+)( localize( PostActionsEllipsisMenuRestore ) );

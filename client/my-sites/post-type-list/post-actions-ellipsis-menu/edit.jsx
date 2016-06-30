@@ -16,7 +16,7 @@ import { getPostType } from 'state/post-types/selectors';
 import { getCurrentUserId, isValidCapability, canCurrentUser } from 'state/current-user/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
-function PostTypeListPostActionsEdit( { translate, siteId, canEdit, status, editUrl, isKnownType } ) {
+function PostActionsEllipsisMenuEdit( { translate, siteId, canEdit, status, editUrl, isKnownType } ) {
 	if ( 'trash' === status || ! canEdit ) {
 		return null;
 	}
@@ -29,7 +29,7 @@ function PostTypeListPostActionsEdit( { translate, siteId, canEdit, status, edit
 	);
 }
 
-PostTypeListPostActionsEdit.propTypes = {
+PostActionsEllipsisMenuEdit.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	siteId: PropTypes.number,
@@ -62,4 +62,4 @@ export default connect( ( state, ownProps ) => {
 		editUrl: getEditorPath( state, post.site_ID, post.ID ),
 		isKnownType: !! type
 	};
-} )( localize( PostTypeListPostActionsEdit ) );
+} )( localize( PostActionsEllipsisMenuEdit ) );

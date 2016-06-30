@@ -13,7 +13,7 @@ import { trashPost, deletePost } from 'state/posts/actions';
 import { getPost } from 'state/posts/selectors';
 import { getCurrentUserId, canCurrentUser } from 'state/current-user/selectors';
 
-function PostTypeListPostActionsTrash( { translate, siteId, postId, status, canDelete, dispatchTrashPost, dispatchDeletePost } ) {
+function PostActionsEllipsisMenuTrash( { translate, siteId, postId, status, canDelete, dispatchTrashPost, dispatchDeletePost } ) {
 	if ( ! canDelete ) {
 		return null;
 	}
@@ -44,7 +44,7 @@ function PostTypeListPostActionsTrash( { translate, siteId, postId, status, canD
 	);
 }
 
-PostTypeListPostActionsTrash.propTypes = {
+PostActionsEllipsisMenuTrash.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	postId: PropTypes.number,
@@ -76,4 +76,4 @@ export default connect(
 		dispatchTrashPost: trashPost,
 		dispatchDeletePost: deletePost
 	}
-)( localize( PostTypeListPostActionsTrash ) );
+)( localize( PostActionsEllipsisMenuTrash ) );

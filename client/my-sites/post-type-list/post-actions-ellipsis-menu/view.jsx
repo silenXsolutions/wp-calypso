@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
 
-function PostTypeListPostActionsView( { translate, status } ) {
+function PostActionsEllipsisMenuView( { translate, status } ) {
 	if ( 'trash' === status ) {
 		return null;
 	}
@@ -27,7 +27,7 @@ function PostTypeListPostActionsView( { translate, status } ) {
 	);
 }
 
-PostTypeListPostActionsView.propTypes = {
+PostActionsEllipsisMenuView.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	status: PropTypes.string
@@ -42,4 +42,4 @@ export default connect( ( state, ownProps ) => {
 	return {
 		status: post.status
 	};
-} )( localize( PostTypeListPostActionsView ) );
+} )( localize( PostActionsEllipsisMenuView ) );
