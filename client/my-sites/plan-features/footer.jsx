@@ -10,11 +10,20 @@ import React, { PropTypes } from 'react';
  */
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
+import classNames from 'classnames';
 
-const PlanFeaturesFooter = ( { translate, current = false, available = true, description, onUpgradeClick = noop } ) => {
+const PlanFeaturesFooter = ( {
+	available = true,
+	current = false,
+	description,
+	onUpgradeClick = noop,
+	translate
+} ) => {
+	const classes = classNames( 'plan-features__footer', { 'has-description': !! description } );
+
 	return (
-		<footer className="plan-features__footer">
-			<p className="plan-features__footer-desc">{ description }</p>
+		<footer className={ classes }>
+			{ description && <p className="plan-features__footer-desc">{ description }</p> }
 			<div className="plan-features__footer-buttons">
 				{
 					current
@@ -22,7 +31,10 @@ const PlanFeaturesFooter = ( { translate, current = false, available = true, des
 							<Gridicon size={ 18 } icon="checkmark" />
 							{ translate( 'Your plan' ) }
 						</Button>
-						: <Button className="plan-features__footer-button" { ...( available ? { onClick: onUpgradeClick, primary: true } : { disabled: true } ) }>
+						: <Button className="plan-features__footer-button" {
+							...( available
+								? { onClick: onUpgradeClick, primary: true }
+								: { disabled: true } ) }>
 							{ translate( 'Upgrade' ) }
 						</Button>
 				}
@@ -34,7 +46,7 @@ const PlanFeaturesFooter = ( { translate, current = false, available = true, des
 PlanFeaturesFooter.propTypes = {
 	current: PropTypes.bool,
 	available: PropTypes.bool,
-	description: PropTypes.string.isRequired,
+	description: PropTypes.string,
 	onUpgradeClick: PropTypes.func
 };
 

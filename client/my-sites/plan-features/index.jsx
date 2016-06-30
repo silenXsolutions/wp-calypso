@@ -39,14 +39,14 @@ class PlanFeatures extends Component {
 		const {
 			available,
 			currencyCode,
-			planName,
-			rawPrice,
-			discountPrice,
-			popular,
 			current,
-			planConstantObj,
+			discountPrice,
 			features,
-			onUpgradeClick
+			onUpgradeClick,
+			planConstantObj,
+			planName,
+			popular,
+			rawPrice,
 		} = this.props;
 
 		const classes = classNames( 'plan-features', {
@@ -66,6 +66,12 @@ class PlanFeatures extends Component {
 					rawPrice={ rawPrice }
 					title={ planConstantObj.getTitle() }
 				/>
+				<PlanFeaturesFooter
+					available={ available }
+					current={ current }
+					description={ planConstantObj.getDescription() }
+					onUpgradeClick={ onUpgradeClick }
+				/>
 				<PlanFeaturesItemList>
 					{
 						features.map( ( feature, index ) =>
@@ -74,8 +80,8 @@ class PlanFeatures extends Component {
 					}
 				</PlanFeaturesItemList>
 				<PlanFeaturesFooter
-					current={ current }
 					available={ available }
+					current={ current }
 					onUpgradeClick={ onUpgradeClick }
 				/>
 			</div>
