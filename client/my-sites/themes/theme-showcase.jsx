@@ -59,17 +59,17 @@ const ThemeShowcase = React.createClass( {
 			this.props.options,
 			[ 'preview', 'action' ],
 			theme => this.togglePreview( theme )
-		),
-			buttonOptions = merge(
-				{},
-				this.props.options,
-				{ preview: {
-					label: actionLabels.preview.label,
-					action: previewAction
-				} }
-			),
-			defaultOption = this.props.options[ this.props.defaultOption ],
-			getScreenshotOption = theme => buttonOptions[ this.props.getScreenshotOption( theme ) ];
+		);
+		const buttonOptions = merge(
+			{},
+			this.props.options,
+			{ preview: {
+				label: actionLabels.preview.label,
+				action: previewAction
+			} }
+		);
+		const defaultOption = this.props.options[ this.props.defaultOption ];
+		const getScreenshotOption = theme => buttonOptions[ this.props.getScreenshotOption( theme ) ];
 
 		return (
 			<Main className="themes">
