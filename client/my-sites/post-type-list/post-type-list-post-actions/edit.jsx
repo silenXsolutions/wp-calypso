@@ -13,7 +13,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
-import { getCurrentUserId, canCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserId, isValidCapability, canCurrentUser } from 'state/current-user/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 function PostTypeListPostActionsEdit( { translate, siteId, canEdit, status, editUrl } ) {
@@ -46,17 +46,17 @@ export default connect( ( state, ownProps ) => {
 
 	const type = getPostType( state, post.site_ID, post.type );
 	const userId = getCurrentUserId( state );
+	const isAuthor = get( post.author, 'ID' ) === userId;
 
-	let capability;
-	if ( get( post.author, 'ID' ) === userId ) {
-		capability = get( type, 'capabilities.edit_posts' );
-	} else {
-		capability = get( type, 'capabilities.edit_others_posts' );
+	let capability = isAuthor ? 'edit_posts' : 'edit_others_posts';
+	const typeCapability = get( type, [ 'capabilities', capability ] );
+	if ( isValidCapability( state, post.site_ID, typeCapability ) ) {
+		capability = typeCapability;
 	}
 
 	return {
 		siteId: post.site_ID,
-		canEdit: capability && canCurrentUser( state, post.site_ID, capability ),
+		canEdit: canCurrentUser( state, post.site_ID, capability ),
 		status: post.status,
 		editUrl: getEditorPath( state, post.site_ID, post.ID )
 	};
