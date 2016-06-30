@@ -47,16 +47,18 @@ export const sheetOptions = ( site = false, isJetpack = false ) => ( {
 		: {}
 } );
 
+const optionShape = PropTypes.shape( {
+	label: PropTypes.string.isRequired,
+	header: PropTypes.string,
+	getUrl: PropTypes.func,
+	action: PropTypes.func
+} );
+
 const ThemeShowcase = React.createClass( {
 	propTypes: {
 		// Connected props
-		options: PropTypes.objectOf( PropTypes.shape( {
-			label: PropTypes.string.isRequired,
-			header: PropTypes.string,
-			getUrl: PropTypes.func,
-			action: PropTypes.func
-		} ) ),
-		defaultOption: PropTypes.string,
+		options: PropTypes.objectOf( optionShape ),
+		defaultOption: optionShape,
 		getScreenshotOption: PropTypes.func
 	},
 
@@ -78,7 +80,7 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	onPreviewButtonClick( theme ) {
-		const defaultOption = this.props.options[ this.props.defaultOption ];
+		const { defaultOption } = this.props;
 		this.setState( { showPreview: false }, () => {
 			defaultOption.action( theme );
 		} );
@@ -101,8 +103,8 @@ const ThemeShowcase = React.createClass( {
 				action: previewAction
 			} }
 		);
-		const defaultOption = this.props.options[ this.props.defaultOption ];
-		const getScreenshotOption = theme => buttonOptions[ this.props.getScreenshotOption( theme ) ];
+		const { defaultOption } = this.props;
+		const getScreenshotOption = theme => this.props.getScreenshotOption( theme );
 
 		return (
 			<Main className="themes">

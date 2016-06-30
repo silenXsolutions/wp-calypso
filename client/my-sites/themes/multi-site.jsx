@@ -29,35 +29,39 @@ const ThemesMultiSite = ( props ) => (
 	</ThemesSiteSelectorModal>
 );
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
-	{},
-	ownProps,
-	stateProps,
-	{
-		options: merge(
-			{},
-			mapValues( dispatchProps, actionFn => ( {
-				action: ( theme, site ) => actionFn( theme, site, 'showcase' )
-			} ) ),
-			{
-				preview: {},
-				purchase: config.isEnabled( 'upgrades/checkout' )
-					? {
-						hideForTheme: theme => ! theme.price
-					}
-					: {},
-				activate: {
-					hideForTheme: theme => theme.price
-				},
-				tryandcustomize: {},
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const options = merge(
+		{},
+		mapValues( dispatchProps, actionFn => ( {
+			action: ( theme, site ) => actionFn( theme, site, 'showcase' )
+		} ) ),
+		{
+			preview: {},
+			purchase: config.isEnabled( 'upgrades/checkout' )
+				? {
+					hideForTheme: theme => ! theme.price
+				}
+				: {},
+			activate: {
+				hideForTheme: theme => theme.price
 			},
-			sheetOptions(),
-			actionLabels
-		),
-		defaultOption: 'tryandcustomize',
-		getScreenshotOption: () => 'info'
-	}
-);
+			tryandcustomize: {},
+		},
+		sheetOptions(),
+		actionLabels
+	);
+
+	return Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		{
+			options,
+			defaultOption: options.tryandcustomize,
+			getScreenshotOption: () => options.info
+		}
+	);
+};
 
 export default connect(
 	state => ( {

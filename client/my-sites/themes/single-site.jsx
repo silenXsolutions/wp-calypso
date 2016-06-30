@@ -99,48 +99,49 @@ const ThemesSingleSite = ( props ) => {
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const { selectedSite: site, isCustomizable, isJetpack } = stateProps;
+	const options = merge(
+		{},
+		mapValues( dispatchProps, actionFn => ( {
+			action: theme => actionFn( theme, site, 'showcase' )
+		} ) ),
+		{
+			customize: isCustomizable
+				? {
+					hideForTheme: theme => ! theme.active
+				}
+				: {},
+			preview: isJetpack
+				? {
+					action: theme => dispatchProps.customize( theme, site, 'showcase' ),
+					hideForTheme: theme => theme.active
+				}
+				: {
+					hideForTheme: theme => theme.active
+				},
+			purchase: config.isEnabled( 'upgrades/checkout' )
+				? {
+					hideForTheme: theme => theme.active || theme.purchased || ! theme.price
+				}
+				: {},
+			activate: {
+				hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
+			},
+			tryandcustomize: {
+				hideForTheme: theme => theme.active
+			},
+		},
+		sheetOptions( site, isJetpack ),
+		actionLabels
+	);
 
 	return Object.assign(
 		{},
 		ownProps,
 		stateProps,
 		{
-			options: merge(
-				{},
-				mapValues( dispatchProps, actionFn => ( {
-					action: theme => actionFn( theme, site, 'showcase' )
-				} ) ),
-				{
-					customize: isCustomizable
-						? {
-							hideForTheme: theme => ! theme.active
-						}
-						: {},
-					preview: isJetpack
-						? {
-							action: theme => dispatchProps.customize( theme, site, 'showcase' ),
-							hideForTheme: theme => theme.active
-						}
-						: {
-							hideForTheme: theme => theme.active
-						},
-					purchase: config.isEnabled( 'upgrades/checkout' )
-						? {
-							hideForTheme: theme => theme.active || theme.purchased || ! theme.price
-						}
-						: {},
-					activate: {
-						hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
-					},
-					tryandcustomize: {
-						hideForTheme: theme => theme.active
-					},
-				},
-				sheetOptions( site, isJetpack ),
-				actionLabels
-			),
-			defaultOption: 'tryandcustomize',
-			getScreenshotOption: theme => theme.active ? 'customize' : 'info'
+			options,
+			defaultOption: options.tryandcustomize,
+			getScreenshotOption: theme => theme.active ? options.customize : options.info
 		}
 	);
 };
