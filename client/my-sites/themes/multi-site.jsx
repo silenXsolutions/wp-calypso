@@ -47,7 +47,9 @@ export default connect(
 		{
 			options: merge(
 				{},
-				mapValues( dispatchProps, action => ( { action } ) ),
+				mapValues( dispatchProps, actionFn => ( {
+					action: ( theme, site ) => actionFn( theme, site, 'showcase' )
+				} ) ),
 				{
 					preview: {},
 					purchase: config.isEnabled( 'upgrades/checkout' )

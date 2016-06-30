@@ -122,7 +122,9 @@ export default connect(
 			{
 				options: merge(
 					{},
-					mapValues( dispatchProps, action => theme => action( theme, site, 'showcase' ) ),
+					mapValues( dispatchProps, actionFn => ( {
+						action: theme => actionFn( theme, site, 'showcase' )
+					} ) ),
 					{
 						customize: isCustomizable
 							? {
