@@ -20,7 +20,7 @@ import { getDetailsUrl, getSupportUrl, getHelpUrl, isPremium } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import config from 'config';
-import { ThemeShowcase } from './logged-out';
+import ThemeShowcase from './theme-showcase';
 
 const ThemesMultiSite = ( props ) => (
 	<ThemesSiteSelectorModal { ...props } sourcePath={ '/design' }>

@@ -34,7 +34,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { ThemeShowcase } from './logged-out';
+import ThemeShowcase from './theme-showcase';
 
 const sites = sitesFactory();
 
