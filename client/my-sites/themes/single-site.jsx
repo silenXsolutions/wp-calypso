@@ -61,6 +61,13 @@ const ThemesSingleSite = ( props ) => {
 		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
 		jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
+	// If we've only just switched from single to multi-site, there's a chance
+	// this component is still being rendered with site unset, so we need to guard
+	// against that case.
+	if ( ! site ) {
+		return null;
+	}
+
 	if ( isJetpack ) {
 		if ( ! jetpackEnabled ) {
 			return (
