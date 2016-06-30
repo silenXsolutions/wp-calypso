@@ -23,7 +23,7 @@ import guidedToursConfig from 'layout/guided-tours/config';
 const getToursConfig = memoize( ( tour ) => guidedToursConfig.get( tour ) );
 const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 
-/**
+/*
  * This would/will be part of the existing config for tours.
  */
 const relevantFeatures = [
@@ -44,6 +44,11 @@ const relevantFeatures = [
 	},
 ];
 
+/*
+ * Returns a collection of tour names. These tours are selected if the user has
+ * recently navigated to a section of Calypso that comes with a corresponding
+ * tour.
+ */
 const getToursFromFeaturesReached = createSelector(
 	state => reverse( uniq(
 		getActionLog( state )
@@ -62,6 +67,10 @@ const getToursFromFeaturesReached = createSelector(
 	getActionLog
 );
 
+/*
+ * Returns the names of the tours that the user has previously seen, both
+ * recently and in the past.
+ */
 const getToursSeen = createSelector(
 	state => uniq(
 		getToursHistory( state )
@@ -70,6 +79,10 @@ const getToursSeen = createSelector(
 	getToursHistory
 );
 
+/*
+ * Returns the name of the tour requested via the URL's query arguments, if the
+ * tour exists. Returns `undefined` otherwise.
+ */
 const getTourFromQuery = createSelector(
 	state => {
 		const { tour } = getInitialQueryArguments( state );
@@ -80,8 +93,9 @@ const getTourFromQuery = createSelector(
 	getInitialQueryArguments
 );
 
-/**
- * Returns true if `tour` has been seen in the current Calypso session.
+/*
+ * Returns true if `tour` has been seen in the current Calypso session, false
+ * otherwise.
  */
 const hasJustSeenTour = createSelector(
 	( state, tour ) => find( getActionLog( state ), {
@@ -92,34 +106,59 @@ const hasJustSeenTour = createSelector(
 	getActionLog
 );
 
+/*
+ * Returns the name of the tour requested via URL query arguments if it hasn't
+ * "just" been seen (i.e., in the current Calypso session).
+ */
+const findRequestedTour = state => {
+	const requestedTour = getTourFromQuery( state );
+	if ( requestedTour && ! hasJustSeenTour( state, requestedTour ) ) {
+		return requestedTour;
+	}
+};
+
+/*
+ * Returns the name of the first tour available from triggers, assuming the
+ * tour hasn't been ruled out (e.g. if it has already been seen or if the
+ * "context" isn't right.
+ */
+const findTriggeredTour = state => {
+	const toursFromTriggers = uniq( [
+		...getToursFromFeaturesReached( state ),
+		// Right now, only one source from which to derive tours, but we may
+		// have more later. Examples:
+		// ...getToursFromPurchases( state ),
+		// ...getToursFromFirstActions( state ),
+	] );
+
+	const toursToDismiss = uniq( [
+		// Same idea here.
+		...getToursSeen( state ),
+	] );
+
+	const newTours = difference( toursFromTriggers, toursToDismiss );
+	return newTours.find( tour => {
+		const { context = noop } = find( relevantFeatures, { tour } );
+		return context( state );
+	} );
+};
+
 export const findEligibleTour = createSelector(
-	state => {
-		const requestedTour = getTourFromQuery( state );
-		if ( requestedTour && ! hasJustSeenTour( state, requestedTour ) ) {
-			return requestedTour;
-		}
-
-		const toursFromTriggers = uniq( [
-			...getToursFromFeaturesReached( state ),
-			// Right now, only one source from which to derive tours, but we may
-			// have more later. Examples:
-			// ...getToursFromPurchases( state ),
-			// ...getToursFromFirstActions( state ),
-		] );
-
-		const toursToDismiss = uniq( [
-			// Same idea here.
-			...getToursSeen( state ),
-		] );
-
-		const newTours = difference( toursFromTriggers, toursToDismiss );
-		return newTours.find( tour => {
-			const { context = noop } = find( relevantFeatures, { tour } );
-			return context( state );
-		} );
-	},
+	state => findRequestedTour( state ) || findTriggeredTour( state ),
 	[ getActionLog, getToursHistory ]
 );
+
+const getStepConfig = ( state, tourConfig, stepName ) => {
+	const step = tourConfig[ stepName ] || false;
+	const shouldSkip = !! (
+		step &&
+		( step.showInContext && ! step.showInContext( state ) ) ||
+		( step.continueIf && step.continueIf( state ) )
+	);
+	return shouldSkip
+		? getStepConfig( state, tourConfig, step.next )
+		: step;
+};
 
 /**
  * Returns the current state for Guided Tours.
@@ -156,19 +195,8 @@ export const getGuidedTourState = createSelector(
 
 		const tourConfig = getToursConfig( tour );
 
-		// TODO: move out of getGuidedTourState
-		const getStepConfig = name => {
-			const step = tourConfig[ name ] || false;
-			const shouldSkip = !! (
-				step &&
-				( step.showInContext && ! step.showInContext( state ) ) ||
-				( step.continueIf && step.continueIf( state ) )
-			);
-			return shouldSkip ? getStepConfig( step.next ) : step;
-		};
-
-		const stepConfig = getStepConfig( stepName ) || false;
-		const nextStepConfig = getStepConfig( stepConfig.next ) || false;
+		const stepConfig = getStepConfig( state, tourConfig, stepName ) || false;
+		const nextStepConfig = getStepConfig( state, tourConfig, stepConfig.next ) || false;
 
 		const shouldShow = !! (
 			! isSectionLoading( state ) &&
