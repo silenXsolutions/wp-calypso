@@ -10,6 +10,9 @@ import filter from 'lodash/filter';
  * Internal dependencies
  */
 import {
+	READER_START_GRADUATE_REQUEST,
+	READER_START_GRADUATE_REQUEST_SUCCESS,
+	READER_START_GRADUATE_REQUEST_FAILURE,
 	READER_START_RECOMMENDATIONS_RECEIVE,
 	READER_START_RECOMMENDATIONS_REQUEST,
 	READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
@@ -51,6 +54,29 @@ export function items( state = [], action ) {
 }
 
 /**
+ * Returns the updated "graduation" from cold start request state after an
+ * action has been dispatched.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function isRequestingGraduation( state = false, action ) {
+	switch ( action.type ) {
+		case READER_START_GRADUATE_REQUEST:
+		case READER_START_GRADUATE_REQUEST_SUCCESS:
+		case READER_START_GRADUATE_REQUEST_FAILURE:
+			return READER_START_GRADUATE_REQUEST === action.type;
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return false;
+	}
+
+	return state;
+}
+
+/**
  * Returns the updated requests state after an action has been dispatched.
  *
  * @param  {Object} state  Current state
@@ -72,6 +98,13 @@ export function isRequestingRecommendations( state = false, action ) {
 	return state;
 }
 
+/**
+ * Returns the updated requests state after an action has been dispatched.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
 export function recommendationsInteractedWith( state = [], action ) {
 	switch ( action.type ) {
 		case READER_START_RECOMMENDATION_INTERACTION:
@@ -85,8 +118,34 @@ export function recommendationsInteractedWith( state = [], action ) {
 	return state;
 }
 
+/**
+ * Returns the state of the user's Reader. New users are shown the cold start
+ * recommendations, while regular / graduated users are shown the normal recs.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function isNewReader( state = false, action ) {
+	switch ( action.type ) {
+		case READER_START_GRADUATE_REQUEST_SUCCESS:
+			return false;
+
+		case READER_START_GRADUATE_REQUEST_FAILURE:
+			return true;
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return false;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	items,
+	isNewReader,
+	isRequestingGraduation,
 	isRequestingRecommendations,
 	recommendationsInteractedWith
 } );
