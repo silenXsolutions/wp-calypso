@@ -16,7 +16,7 @@ import { getPostType } from 'state/post-types/selectors';
 import { getCurrentUserId, canCurrentUser } from 'state/current-user/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
-function PostTypeListPostActionsEdit( { translate, siteId, label, canEdit, status, editUrl } ) {
+function PostTypeListPostActionsEdit( { translate, siteId, canEdit, status, editUrl } ) {
 	if ( 'trash' === status || ! canEdit ) {
 		return null;
 	}
@@ -24,7 +24,7 @@ function PostTypeListPostActionsEdit( { translate, siteId, label, canEdit, statu
 	return (
 		<PopoverMenuItem href={ editUrl } icon="pencil">
 			{ siteId && <QueryPostTypes siteId={ siteId } /> }
-			{ label || translate( 'Edit', { context: 'verb' } ) }
+			{ translate( 'Edit', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
 }
@@ -33,7 +33,6 @@ PostTypeListPostActionsEdit.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	siteId: PropTypes.number,
-	label: PropTypes.string,
 	canEdit: PropTypes.bool,
 	status: PropTypes.string,
 	editUrl: PropTypes.string
@@ -57,7 +56,6 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		siteId: post.site_ID,
-		label: get( type, 'labels.edit_item' ),
 		canEdit: capability && canCurrentUser( state, post.site_ID, capability ),
 		status: post.status,
 		editUrl: getEditorPath( state, post.site_ID, post.ID )
