@@ -19,12 +19,6 @@ import config from 'config';
 import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
-import {
-	getDetailsUrl,
-	getSupportUrl,
-	getHelpUrl,
-	isPremium
-} from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import sitesFactory from 'lib/sites-list';
@@ -34,7 +28,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import ThemeShowcase from './theme-showcase';
+import ThemeShowcase, { sheetOptions } from './theme-showcase';
 
 const sites = sitesFactory();
 
@@ -65,7 +59,7 @@ const ThemesSingleSite = ( props ) => {
 	// this component is still being rendered with site unset, so we need to guard
 	// against that case.
 	if ( ! site ) {
-		return null;
+		return <Main className="themes" />;
 	}
 
 	if ( isJetpack ) {
@@ -141,24 +135,8 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 					tryandcustomize: {
 						hideForTheme: theme => theme.active
 					},
-					separator: {
-						separator: true
-					},
-					info: {
-						getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
-					},
-					support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
-						? {
-							getUrl: theme => getSupportUrl( theme, site ),
-							hideForTheme: theme => ! isPremium( theme )
-						}
-						: {},
-					help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
-						? {
-							getUrl: theme => getHelpUrl( theme, site )
-						}
-						: {},
 				},
+				sheetOptions( site, isJetpack ),
 				actionLabels
 			),
 			defaultOption: 'tryandcustomize',

@@ -8,10 +8,10 @@ import merge from 'lodash/merge';
  * Internal dependencies
  */
 import { signup } from 'state/themes/actions' ;
-import { getSignupUrl, getDetailsUrl, getSupportUrl, getHelpUrl, isPremium } from './helpers';
+import { getSignupUrl } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
-import ThemeShowcase from './theme-showcase';
+import ThemeShowcase, { sheetOptions } from './theme-showcase';
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
 	{},
@@ -27,22 +27,9 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
 				},
 				preview: {
 					hideForTheme: theme => theme.active
-				},
-				separator: {
-					separator: true
-				},
-				info: {
-					getUrl: theme => getDetailsUrl( theme ),
-				},
-				support: {
-					getUrl: theme => getSupportUrl( theme ),
-					// Free themes don't have support docs.
-					hideForTheme: theme => ! isPremium( theme )
-				},
-				help: {
-					getUrl: theme => getHelpUrl( theme )
 				}
 			},
+			sheetOptions(),
 			actionLabels
 		),
 		defaultOption: 'signup',

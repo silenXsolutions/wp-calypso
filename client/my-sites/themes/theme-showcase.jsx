@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
 import get from 'lodash/get';
@@ -14,7 +14,38 @@ import Main from 'components/main';
 import ThemePreview from './theme-preview';
 import ThemesSelection from './themes-selection';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { addTracking } from './helpers';
+import {
+	getDetailsUrl,
+	getSupportUrl,
+	getHelpUrl,
+	isPremium,
+	addTracking
+} from './helpers';
+
+export const sheetOptions = ( site = false, isJetpack = false ) => ( {
+	separator: {
+		separator: true
+	},
+	info: {
+		label: i18n.translate( 'Info', {
+			comment: 'label for displaying the theme info sheet'
+		} ),
+		getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
+	},
+	support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+		? {
+			label: i18n.translate( 'Setup' ),
+			getUrl: theme => getSupportUrl( theme, site ),
+			hideForTheme: theme => ! isPremium( theme )
+		}
+		: {},
+	help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
+		? {
+			label: i18n.translate( 'Support' ),
+			getUrl: theme => getHelpUrl( theme, site )
+		}
+		: {}
+} );
 
 const ThemeShowcase = React.createClass( {
 	propTypes: {
