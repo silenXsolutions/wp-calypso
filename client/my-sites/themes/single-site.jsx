@@ -110,7 +110,8 @@ export default connect(
 	{
 		activate,
 		customize,
-		purchase
+		purchase,
+		tryandcustomize: customize,
 	},
 	( stateProps, dispatchProps, ownProps ) => {
 		const { selectedSite: site, isCustomizable, isJetpack } = stateProps;
@@ -148,7 +149,6 @@ export default connect(
 							hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
 						},
 						tryandcustomize: {
-							action: theme => dispatchProps.customize( theme, site, 'showcase' ),
 							hideForTheme: theme => theme.active
 						},
 						separator: {
