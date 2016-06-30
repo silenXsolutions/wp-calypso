@@ -21,7 +21,6 @@ import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails } from 'lib/upgrades/actions';
 import FormButton from 'components/forms/form-button';
-import { abtest } from 'lib/abtest';
 
 // Cannot convert to ES6 import
 const wpcom = require( 'lib/wp' ).undocumented(),
@@ -154,11 +153,19 @@ export default React.createClass( {
 		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
 	},
 
+	renderSubmitButton() {
+		return (
+			<FormButton className="checkout__domain-details-form-submit-button" onClick={ this.handleSubmitButtonClick }>
+				{ this.translate( 'Continue to Checkout' ) }
+			</FormButton>
+		);
+	},
+
 	renderPrivacySection() {
 		return (
 			<PrivacyProtection
 				cart={ this.props.cart }
-				countriesList= { countriesList }
+				countriesList={ countriesList }
 				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
 				fields={ this.state.form }
 				isChecked={ this.allDomainRegistrationsHavePrivacy() }
@@ -168,15 +175,7 @@ export default React.createClass( {
 				onDialogOpen={ this.openDialog }
 				onDialogSelect={ this.handlePrivacyDialogSelect }
 				isDialogVisible={ this.state.isDialogVisible }
-				productsList={ this.props.productsList } />
-		);
-	},
-
-	renderSubmitButton() {
-		return (
-			<FormButton className="checkout__domain-details-form-submit-button" onClick={ this.handleSubmitButtonClick }>
-				{ this.translate( 'Continue to Checkout' ) }
-			</FormButton>
+				productsList={ this.props.productsList }/>
 		);
 	},
 
@@ -244,9 +243,7 @@ export default React.createClass( {
 
 				<Input label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
 
-				{ ( abtest( 'privacyCheckbox' ) !== 'checkbox'
-					? this.renderPrivacySection()
-					: this.renderSubmitButton() ) }
+				{ this.renderSubmitButton() }
 			</div>
 		);
 	},
@@ -358,10 +355,7 @@ export default React.createClass( {
 
 		return (
 			<div>
-				{ ( abtest( 'privacyCheckbox' ) === 'checkbox'
-					? this.renderPrivacySection()
-					: null ) }
-
+				{ this.renderPrivacySection() }
 				<PaymentBox
 					classSet={ classSet }
 					title={ this.translate(

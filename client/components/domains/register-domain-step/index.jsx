@@ -526,11 +526,9 @@ const RegisterDomainStep = React.createClass( {
 				productSlug: suggestion.product_slug
 			} ) );
 
-			if ( abtest( 'privacyCheckbox' ) === 'checkbox' &&
-				(
-					cartItems.isNextDomainFree( this.props.cart ) ||
-					cartItems.shouldBundleDomainWithPlan( domainsWithPlansOnlyTestEnabled, this.props.selectedSite, this.props.cart, suggestion )
-				)
+			if (
+				cartItems.isNextDomainFree( this.props.cart )
+				|| cartItems.shouldBundleDomainWithPlan( domainsWithPlansOnlyTestEnabled, this.props.selectedSite, this.props.cart, suggestion )
 			) {
 				upgradesActions.addItem( cartItems.domainPrivacyProtection( {
 					domain: suggestion.domain_name
