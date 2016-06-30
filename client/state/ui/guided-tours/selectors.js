@@ -138,15 +138,7 @@ export const getGuidedTourState = createSelector(
 		const tourState = getRawGuidedTourState( state );
 		const { stepName = 'init' } = tourState;
 
-		// note how we don't care about these:
-		// let { shouldReallyShow, tour } = tourState;
-
-		let { tour } = tourState;
-
-		if ( ! tour ) {
-			tour = findEligibleTour( state );
-		}
-
+		const tour = findEligibleTour( state );
 		const shouldReallyShow = !! tour;
 
 		console.log( 'tours reached', getToursFromFeaturesReached( state ) );

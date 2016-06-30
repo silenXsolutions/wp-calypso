@@ -34,7 +34,9 @@ describe( 'selectors', () => {
 			expect( tourState ).to.deep.equal( { shouldShow: false, stepConfig: false, nextStepConfig: false } );
 		} );
 
-		it( 'should include the config of the current tour step', () => {
+		// disabled because tours are now selected via `findEligibleTour`,
+		// rather than direct guidedTour state
+		xit( 'should include the config of the current tour step', () => {
 			const tourState = getGuidedTourState( {
 				ui: {
 					guidedTour: {
