@@ -15,7 +15,7 @@ import PostActionsEllipsisMenuView from './view';
 import PostActionsEllipsisMenuRestore from './restore';
 
 export default function PostActionsEllipsisMenu( { globalId, includeDefaultActions, children } ) {
-	const actions = [];
+	let actions = [];
 
 	if ( includeDefaultActions ) {
 		actions.push(
@@ -29,10 +29,11 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 
 	children = Children.toArray( children );
 	if ( children.length ) {
-		actions.push(
-			<PopoverMenuSeparator key="separator" />,
-			...children
-		);
+		if ( actions.length ) {
+			actions.push( <PopoverMenuSeparator key="separator" /> );
+		}
+
+		actions = actions.concat( children );
 	}
 
 	return (
