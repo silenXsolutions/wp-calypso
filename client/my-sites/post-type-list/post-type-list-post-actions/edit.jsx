@@ -16,14 +16,14 @@ import { getPostType } from 'state/post-types/selectors';
 import { getCurrentUserId, isValidCapability, canCurrentUser } from 'state/current-user/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
-function PostTypeListPostActionsEdit( { translate, siteId, canEdit, status, editUrl } ) {
+function PostTypeListPostActionsEdit( { translate, siteId, canEdit, status, editUrl, isKnownType } ) {
 	if ( 'trash' === status || ! canEdit ) {
 		return null;
 	}
 
 	return (
 		<PopoverMenuItem href={ editUrl } icon="pencil">
-			{ siteId && <QueryPostTypes siteId={ siteId } /> }
+			{ siteId && ! isKnownType && <QueryPostTypes siteId={ siteId } /> }
 			{ translate( 'Edit', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
@@ -35,7 +35,8 @@ PostTypeListPostActionsEdit.propTypes = {
 	siteId: PropTypes.number,
 	canEdit: PropTypes.bool,
 	status: PropTypes.string,
-	editUrl: PropTypes.string
+	editUrl: PropTypes.string,
+	isKnownType: PropTypes.bool
 };
 
 export default connect( ( state, ownProps ) => {
@@ -58,6 +59,7 @@ export default connect( ( state, ownProps ) => {
 		siteId: post.site_ID,
 		canEdit: canCurrentUser( state, post.site_ID, capability ),
 		status: post.status,
-		editUrl: getEditorPath( state, post.site_ID, post.ID )
+		editUrl: getEditorPath( state, post.site_ID, post.ID ),
+		isKnownType: !! type
 	};
 } )( localize( PostTypeListPostActionsEdit ) );
