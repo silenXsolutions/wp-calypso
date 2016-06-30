@@ -14,13 +14,17 @@ import QueryPostTypes from 'components/data/query-post-types';
 import { getPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 
-function PostTypeListPostActionsView( { translate, siteId, label, status, url } ) {
+function PostTypeListPostActionsView( { translate, siteId, label, status } ) {
 	if ( 'trash' === status ) {
 		return null;
 	}
 
+	function viewPost() {
+		alert( 'Not Yet Implemented' );
+	}
+
 	return (
-		<PopoverMenuItem href={ url } icon="external" target="_blank">
+		<PopoverMenuItem onClick={ viewPost } icon="external">
 			{ siteId && <QueryPostTypes siteId={ siteId } /> }
 			{ label || translate( 'View', { context: 'verb' } ) }
 		</PopoverMenuItem>
@@ -32,8 +36,7 @@ PostTypeListPostActionsView.propTypes = {
 	translate: PropTypes.func.isRequired,
 	siteId: PropTypes.number,
 	label: PropTypes.string,
-	status: PropTypes.string,
-	url: PropTypes.string
+	status: PropTypes.string
 };
 
 export default connect( ( state, ownProps ) => {
@@ -45,7 +48,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId: post.site_ID,
 		label: get( getPostType( state, post.site_ID, post.type ), 'labels.view_item' ),
-		status: post.status,
-		url: post.URL
+		status: post.status
 	};
 } )( localize( PostTypeListPostActionsView ) );
