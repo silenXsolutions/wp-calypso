@@ -10,16 +10,16 @@ import {
 	SELECTED_SITE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
-	ROUTE_SET,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
+import actionLog from './action-log/reducer';
 import editor from './editor/reducer';
 import guidedTour from './guided-tours/reducer';
+import queryArguments from './query-arguments/reducer';
 import reader from './reader/reducer';
 import olark from './olark/reducer';
-import actionLog from './action-log/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -85,10 +85,6 @@ export function isLoading( state = false, action ) {
 export const isPreviewShowing = createReducer( false, {
 	[ PREVIEW_IS_SHOWING ]: ( state, { isShowing } ) =>
 		isShowing !== undefined ? isShowing : state,
-} );
-
-export const queryArguments = createReducer( {}, {
-	[ ROUTE_SET ]: ( state, { query } ) => query,
 } );
 
 const reducer = combineReducers( {

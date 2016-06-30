@@ -79,6 +79,10 @@ export function isPreviewShowing( state ) {
 	return get( state.ui, 'isPreviewShowing', false );
 }
 
-export function getQueryArguments( state ) {
-	return state.ui.queryArguments;
+export function getInitialQueryArguments( state ) {
+	return state.ui.queryArguments.initial;
+}
+
+export function getCurrentQueryArguments( state ) {
+	return state.ui.queryArguments.current;
 }
