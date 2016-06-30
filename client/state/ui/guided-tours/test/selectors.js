@@ -20,6 +20,9 @@ describe( 'selectors', () => {
 					shouldShow: false,
 					guidedTour: false,
 					actionLog: [],
+					queryArguments: {
+						initial: {},
+					},
 				},
 				preferences: {
 					values: {
@@ -63,7 +66,9 @@ describe( 'selectors', () => {
 		} ) => ( {
 			ui: {
 				actionLog,
-				queryArguments,
+				queryArguments: {
+					initial: queryArguments,
+				},
 			},
 			preferences: {
 				values: {
