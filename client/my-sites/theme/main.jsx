@@ -33,7 +33,7 @@ import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
-import actionLabels from 'my-sites/themes/action-labels';
+import themeOptions from 'my-sites/themes/theme-options';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
@@ -341,8 +341,8 @@ const ThemeSheet = React.createClass( {
 					source={ 'details' }/>
 				{ this.state.selectedAction && <ThemesSiteSelectorModal
 					name={ this.state.selectedAction }
-					label={ actionLabels[ this.state.selectedAction ].label }
-					header={ actionLabels[ this.state.selectedAction ].header }
+					label={ themeOptions[ this.state.selectedAction ].label }
+					header={ themeOptions[ this.state.selectedAction ].header }
 					selectedTheme={ this.props }
 					onHide={ this.hideSiteSelectorModal }
 					action={ this.props[ this.state.selectedAction ] }

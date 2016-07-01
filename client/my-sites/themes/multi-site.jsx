@@ -16,7 +16,7 @@ import {
 } from 'state/themes/actions';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
-import { preview, purchase, activate, tryandcustomize } from './action-labels';
+import { preview, purchase, activate, tryandcustomize } from './theme-options';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import ThemeShowcase, { getSheetOptions } from './theme-showcase';
 

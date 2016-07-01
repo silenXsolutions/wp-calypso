@@ -23,7 +23,7 @@ import config from 'config';
 import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
-import { customize, preview, purchase, activate, tryandcustomize } from './action-labels';
+import { customize, preview, purchase, activate, tryandcustomize } from './theme-options';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
@@ -120,8 +120,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 			activate,
 			tryandcustomize,
 		},
-		getSheetOptions( site, isJetpack ),
-		//actionLabels
+		getSheetOptions( site, isJetpack )
 	);
 
 	return Object.assign(

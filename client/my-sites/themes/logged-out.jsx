@@ -11,7 +11,7 @@ import mapValues from 'lodash/mapValues';
 import { signupAction } from 'state/themes/actions' ;
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import ThemeShowcase, { getSheetOptions } from './theme-showcase';
-import { preview, signup } from './action-labels';
+import { preview, signup } from './theme-options';
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const options = merge(
