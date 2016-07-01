@@ -19,7 +19,7 @@ import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import config from 'config';
-import ThemeShowcase, { sheetOptions } from './theme-showcase';
+import ThemeShowcase, { getSheetOptions } from './theme-showcase';
 
 const ThemesMultiSite = ( props ) => (
 	<ThemesSiteSelectorModal { ...props } sourcePath={ '/design' }>
@@ -47,7 +47,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 			},
 			tryandcustomize: {},
 		},
-		sheetOptions(),
+		getSheetOptions(),
 		actionLabels
 	);
 

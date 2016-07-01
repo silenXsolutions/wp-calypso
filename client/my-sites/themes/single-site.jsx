@@ -28,7 +28,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import ThemeShowcase, { sheetOptions } from './theme-showcase';
+import ThemeShowcase, { getSheetOptions } from './theme-showcase';
 
 const sites = sitesFactory();
 
@@ -130,7 +130,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 				hideForTheme: theme => theme.active
 			},
 		},
-		sheetOptions( site, isJetpack ),
+		getSheetOptions( site, isJetpack ),
 		actionLabels
 	);
 

@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
 import { signup } from 'state/themes/actions' ;
 import { getSignupUrl } from './helpers';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
-import ThemeShowcase, { sheetOptions } from './theme-showcase';
+import ThemeShowcase, { getSheetOptions } from './theme-showcase';
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const options = merge(
@@ -28,7 +28,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 				hideForTheme: theme => theme.active
 			}
 		},
-		sheetOptions()
+		getSheetOptions()
 	);
 
 	return Object.assign(

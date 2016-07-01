@@ -22,7 +22,7 @@ import {
 	addTracking
 } from './helpers';
 
-export const sheetOptions = ( site = false, isJetpack = false ) => ( {
+export const getSheetOptions = ( site = false, isJetpack = false ) => ( {
 	separator: {
 		separator: true
 	},
