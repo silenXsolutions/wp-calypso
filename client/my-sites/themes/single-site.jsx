@@ -23,7 +23,7 @@ import config from 'config';
 import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
-import { customize, preview, purchase, activate, tryandcustomize } from './theme-options';
+import { customize, preview, purchase, activate, tryandcustomize, getSheetOptions } from './theme-options';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
@@ -32,7 +32,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import ThemeShowcase, { getSheetOptions } from './theme-showcase';
+import ThemeShowcase from './theme-showcase';
 
 const sites = sitesFactory();
 
