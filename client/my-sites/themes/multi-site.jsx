@@ -10,15 +10,14 @@ import mapValues from 'lodash/mapValues';
  * Internal dependencies
  */
 import {
-	customize as tryandcustomize,
-	purchase,
-	activate
+	customize as customizeAction,
+	purchase as purchaseAction,
+	activate as activateAction
 } from 'state/themes/actions';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
-import actionLabels from './action-labels';
+import { preview, purchase, activate, tryandcustomize } from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
-import config from 'config';
 import ThemeShowcase, { getSheetOptions } from './theme-showcase';
 
 const ThemesMultiSite = ( props ) => (
@@ -36,19 +35,12 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 			action: ( theme, site ) => actionFn( theme, site, 'showcase' )
 		} ) ),
 		{
-			preview: {},
-			purchase: config.isEnabled( 'upgrades/checkout' )
-				? {
-					hideForTheme: theme => ! theme.price
-				}
-				: {},
-			activate: {
-				hideForTheme: theme => theme.price
-			},
-			tryandcustomize: {},
+			preview,
+			purchase,
+			activate,
+			tryandcustomize,
 		},
-		getSheetOptions(),
-		actionLabels
+		getSheetOptions()
 	);
 
 	return Object.assign(
@@ -69,9 +61,9 @@ export default connect(
 		themesList: getThemesList( state )
 	} ),
 	{
-		activate,
-		tryandcustomize,
-		purchase
+		activate: activateAction,
+		tryandcustomize: customizeAction,
+		purchase: purchaseAction
 	},
 	mergeProps
 )( ThemesMultiSite );
