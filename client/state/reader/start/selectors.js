@@ -84,10 +84,10 @@ export function hasInteractedWithRecommendation( state, recommendationId ) {
  * @param {Integer} recommendationId Recommendation ID
  * @return {Boolean} Has user interacted?
  */
-export function hasGraduatedRecommendations ( state ) {
-  let graduated = false;
-  const user = getCurrentUser( state );
-  console.log( 'user:', user );
-  // TODO: grab the current user's `is_new_reader` value and use that if present
+export function hasGraduatedRecommendations( state ) {
+	let graduated = false;
+	const user = getCurrentUser( state );
+	//console.log( 'user:', user );
+	// TODO: grab the current user's `is_new_reader` value and use that if present
 	return graduated;
 }
