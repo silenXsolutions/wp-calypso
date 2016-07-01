@@ -82,7 +82,7 @@ var DnsRecord = React.createClass( {
 			isRoot = name === domain + '.';
 
 		if ( 'SRV' === type ) {
-			return service + '._' + protocol + '.' + ( isRoot ? '' : name + '.' ) + domain;
+			return '_' + service + '._' + protocol + '.' + ( isRoot ? '' : name + '.' ) + domain;
 		}
 
 		if ( endsWith( name, '.' ) ) {
