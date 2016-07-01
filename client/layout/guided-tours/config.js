@@ -162,7 +162,7 @@ function get( tour ) {
 				text: i18n.translate( 'Click to see a demo' ),
 				type: 'ActionStep',
 				placement: 'below',
-				target: '.themes__sheet-preview-link',
+				target: 'theme-sheet-preview',
 				showInContext: state => getSectionName( state ) === 'theme',
 				arrow: 'left-top',
 				next: 'close-preview',
