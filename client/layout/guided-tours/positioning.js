@@ -59,7 +59,7 @@ export const posToCss = ( { x, y } ) => ( {
 } );
 
 export function targetForSlug( targetSlug ) {
-	return query( '[data-tip-target="' + targetSlug + '"]' )[ 0 ];
+	return query( '[data-tip-target="' + targetSlug + '"]' )[ 0 ] || query( targetSlug )[ 0 ];
 }
 
 export function getValidatedArrowPosition( { targetSlug, arrow, stepPos } ) {
@@ -67,6 +67,8 @@ export function getValidatedArrowPosition( { targetSlug, arrow, stepPos } ) {
 	const rect = target && target.getBoundingClientRect
 		? target.getBoundingClientRect()
 		: global.window.document.body.getBoundingClientRect();
+
+	console.log( 'target', target, 'rect', rect );
 
 	if ( stepPos.y >= rect.top &&
 		stepPos.y <= rect.bottom &&

@@ -9,7 +9,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSectionName, isPreviewShowing } from 'state/ui/selectors';
+import { isFetchingNextPage, getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 
 function get( tour ) {
 	const tours = {
@@ -108,14 +109,6 @@ function get( tour ) {
 				linkUrl: 'https://learn.wordpress.com',
 			},
 		},
-		themes: {
-			version: '20160516',
-			init: {
-				description: 'Dummy tour for Themes',
-				text: 'This is a dummy tour for Themes!',
-				type: 'FinishStep',
-			},
-		},
 		test: {
 			version: '20160516',
 			init: {
@@ -124,6 +117,76 @@ function get( tour ) {
 				type: 'FinishStep',
 			},
 		},
+		themes: {
+			version: '20160609',
+			description: 'Learn how to find and activate a theme',
+			showInContext: state => getSectionName( state ) === 'themes',
+			init: {
+				text: i18n.translate( 'Find a theme thats good for you.' ),
+				type: 'FirstStep',
+				placement: 'right',
+				next: 'search',
+			},
+			search: {
+				text: i18n.translate( 'You can search for themes here, try a few terms, find a theme you like' ),
+				type: 'ActionStep',
+				target: 'themes-search-card',
+				placement: 'below',
+				continueIf: state => {
+					const params = getQueryParams( state );
+					return params && params.search && params.search.length && ! isFetchingNextPage( state ) && getThemesList( state ).length > 0;
+				},
+				arrow: 'top-left',
+				next: 'filter',
+			},
+			filter: {
+				text: i18n.translate( 'You can filter between free & paid themes. Try filtering by free themes' ),
+				type: 'ActionStep',
+				target: 'themes-tier-dropdown',
+				placement: 'below',
+				continueIf: state => {
+					const params = getQueryParams( state );
+					return params && params.tier === 'free';
+				},
+				arrow: 'top-right',
+				next: 'choose-theme',
+			},
+			'choose-theme': {
+				text: i18n.translate( 'Click on any theme to see more details' ),
+				type: 'ActionStep',
+				placement: 'right',
+				continueIf: state => getSectionName( state ) === 'theme',
+				next: 'live-preview',
+			},
+			'live-preview': {
+				text: i18n.translate( 'Click to see a demo' ),
+				type: 'ActionStep',
+				placement: 'below',
+				target: '.themes__sheet-preview-link',
+				showInContext: state => getSectionName( state ) === 'theme',
+				arrow: 'left-top',
+				next: 'close-preview',
+			},
+			'close-preview': {
+				target: 'web-preview__close',
+				arrow: 'left-top',
+				type: 'ActionStep',
+				placement: 'beside',
+				icon: 'cross-small',
+				text: i18n.translate( 'Close the preview' ),
+				showInContext: state => state && isPreviewShowing( state ),
+				next: 'finish',
+			},
+			finish: {
+				placement: 'center',
+				text: i18n.translate( "I guess that's it. I'll probably add some activation steps.", {
+					components: {
+						strong: <strong />,
+					}
+				} ),
+				type: 'FinishStep',
+			},
+		}
 	};
 
 	return tours[ tour ] || null;
