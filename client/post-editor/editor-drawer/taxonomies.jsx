@@ -43,21 +43,21 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 							/>
 						</Accordion>
 					);
-				} else {
-					return (
-						<Accordion
-							key={ taxonomy.name }
-							title={ taxonomy.label }
-							icon={ <Gridicon icon="tag" /> }
-						>
-							<TermTokenField
-								postTerms={ postTerms }
-								taxonomyName={ taxonomy.name }
-								taxonomyLabel={ taxonomy.label }
-							/>
-						</Accordion>
-					);
 				}
+
+				return (
+					<Accordion
+						key={ taxonomy.name }
+						title={ taxonomy.label }
+						icon={ <Gridicon icon="tag" /> }
+					>
+						<TermTokenField
+							postTerms={ postTerms }
+							taxonomyName={ taxonomy.name }
+							taxonomyLabel={ taxonomy.label }
+						/>
+					</Accordion>
+				);
 			} ).filter( Boolean ) }
 		</div>
 	);
