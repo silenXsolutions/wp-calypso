@@ -3,17 +3,39 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import { connect }	from 'react-redux';
+import classnames from 'classnames';
 
-module.exports = React.createClass( {
+/**
+ * Internal dependencies
+ */
+import { getSectionName } from 'state/ui/selectors';
+import { isViewVisible } from 'state/first-view/selectors';
+
+const Main = React.createClass( {
 	displayName: 'Main',
 
 	render: function() {
+		const classes = classnames( this.props.className, 'main', {
+			'is-first-view-visible': this.props.isFirstViewVisible
+		} );
+
 		return (
-			<main className={ classnames( this.props.className, 'main' ) } role="main">
+			<main className={ classes } role="main">
 				{ this.props.children }
 			</main>
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const sectionName = getSectionName( state );
+
+		return {
+			isFirstViewVisible: isViewVisible( state, sectionName ),
+		};
+	},
+	null
+)( Main );

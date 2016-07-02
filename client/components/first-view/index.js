@@ -4,14 +4,18 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import RootChild from 'components/root-child';
+import { getSectionName } from 'state/ui/selectors';
+import { isViewEnabled, isViewVisible } from 'state/first-view/selectors';
+import * as FirstViewActions from 'state/first-view/actions';
 
 // component to avoid having a wrapper element for the transition
 // see: https://facebook.github.io/react/docs/animation.html#rendering-a-single-child
@@ -20,14 +24,25 @@ const TransitionGroupComponent = ( props ) => {
 	return children[ 0 ] || null;
 };
 
-export default React.createClass( {
+const FirstView = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
-	getDefaultProps() {
+	getInitialState() {
 		return {
-			onEnableOrDisableNextTime: noop,
-			onHide: noop
+			isEnabled: false,
 		};
+	},
+
+	componentDidMount() {
+		this.updatePageScrolling();
+	},
+
+	componentDidUpdate() {
+		this.updatePageScrolling();
+	},
+
+	componentWillUnmount() {
+		this.allowPageScrolling();
 	},
 
 	render() {
@@ -52,7 +67,7 @@ export default React.createClass( {
 							<div className={ firstViewHidePreferenceClasses }>
 								<label>
 									<input type="checkbox"
-											checked={ ! this.props.isEnabledNextTime }
+											checked={ ! this.state.isEnabled }
 											onChange={ this.enableOrDisableNextTime } />
 									{ this.translate( 'Don\'t show this again' ) }
 								</label>
@@ -65,10 +80,40 @@ export default React.createClass( {
 	},
 
 	hide() {
-		this.props.onHide();
+		this.props.hideView( { view: this.props.sectionName, enabled: this.state.isEnabled } );
 	},
 
 	enableOrDisableNextTime( event ) {
-		this.props.onEnableOrDisableNextTime( event.target.value );
+		this.setState( {
+			isEnabled: event.target.value
+		} );
+	},
+
+	updatePageScrolling() {
+		if ( this.props.isVisible ) {
+			this.preventPageScrolling();
+		} else {
+			this.allowPageScrolling();
+		}
+	},
+
+	preventPageScrolling() {
+		document.documentElement.classList.add( 'no-scroll' );
+	},
+
+	allowPageScrolling() {
+		document.documentElement.classList.remove( 'no-scroll' );
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const sectionName = getSectionName( state );
+
+		return {
+			sectionName: sectionName,
+			isVisible: isViewVisible( state, sectionName ),
+		};
+	},
+	dispatch => bindActionCreators( FirstViewActions, dispatch )
+)( FirstView );

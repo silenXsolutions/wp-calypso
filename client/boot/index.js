@@ -50,6 +50,7 @@ var config = require( 'config' ),
 	supportUser = require( 'lib/user/support-user-interop' ),
 	isSectionIsomorphic = require( 'state/ui/selectors' ).isSectionIsomorphic,
 	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
+	showFirstView = require( 'state/first-view/actions' ).showView,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -364,6 +365,16 @@ function reduxStoreReady( reduxStore ) {
 	// clear notices
 	//TODO: remove this one when notices are reduxified - it is for old notices
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
+
+	// show first view for section
+	page( '*', function( context, next ) {
+		const section = context.store.getState().ui.section;
+		const sameSection = some( section.paths, path => startsWith( context.prevPath, path ) );
+		if ( ! sameSection ) {
+			context.store.dispatch( showFirstView( { view: section.name } ) );
+		}
+		next();
+	} );
 
 	if ( config.isEnabled( 'olark' ) ) {
 		require( 'lib/olark' );

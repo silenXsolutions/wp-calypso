@@ -23,7 +23,8 @@ var StatsNavigation = require( './stats-navigation' ),
 	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
 	user = require( 'lib/user' )(),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	StatsFirstView = require( './stats-first-view' );
 
 module.exports = React.createClass( {
 	displayName: 'StatsSite',
@@ -173,6 +174,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="main main-column" role="main">
+				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
 					section={ period }

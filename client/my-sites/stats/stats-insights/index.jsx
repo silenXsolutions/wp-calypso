@@ -20,6 +20,8 @@ import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
+import Main from 'components/main';
+import StatsFirstView from '../stats-first-view';
 
 export default React.createClass( {
 	displayName: 'StatsInsights',
@@ -73,7 +75,8 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className="main main-column" role="main">
+			<Main>
+				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation section="insights" site={ site } />
 				<div id="my-stats-content">
@@ -116,7 +119,7 @@ export default React.createClass( {
 						</div>
 					</div>
 				</div>
-			</div>
+			</Main>
 		);
 	}
 } );

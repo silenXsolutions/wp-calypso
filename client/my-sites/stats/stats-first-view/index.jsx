@@ -4,16 +4,23 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
+/**
+ * Internal dependencies
+ */
+import FirstView from 'components/first-view';
+
 export default React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render() {
 		return (
-			<div>
-				{ this.renderIcon() }
-				<h1>{ this.translate( 'Keep track of who\'s viewing your site…' ) }</h1>
-				<p>{ this.translate( 'Stats show a bunch of fun numbers, charts, and graphs that detail how many visits your site gets, what posts and pages are popular, and much more.' ) }</p>
-			</div>
+			<FirstView>
+				<div>
+					{ this.renderIcon() }
+					<h1>{ this.translate( 'Keep track of who\'s viewing your site…' ) }</h1>
+					<p>{ this.translate( 'Stats show a bunch of fun numbers, charts, and graphs that detail how many visits your site gets, what posts and pages are popular, and much more.' ) }</p>
+				</div>
+			</FirstView>
 		);
 	},
 

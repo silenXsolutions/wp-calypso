@@ -7,8 +7,7 @@ var ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	i18n = require( 'i18n-calypso' ),
 	get = require( 'lodash/get' ),
-	ReactRedux = require( 'react-redux' ),
-	config = require( 'config' );
+	ReactRedux = require( 'react-redux' );
 
 /**
  * Internal Dependencies
@@ -20,9 +19,7 @@ var user = require( 'lib/user' )(),
 	titlecase = require( 'to-title-case' ),
 	analyticsPageTitle = 'Stats',
 	layoutFocus = require( 'lib/layout-focus' ),
-	titleActions = require( 'lib/screen-title/actions' ),
-	enableFirstView = require( 'components/enable-first-view' ),
-	FirstView = require( './stats-first-view' );
+	titleActions = require( 'lib/screen-title/actions' );
 
 function getVisitDates() {
 	var statsVisitDates = store.get( 'statVisits' ) || [];
@@ -135,10 +132,6 @@ module.exports = {
 			summarySites = [],
 			momentSiteZone = i18n.moment(),
 			StatsComponent = Insights;
-
-		if ( config.isEnabled( 'stats/first-view' ) ) {
-			StatsComponent = enableFirstView( StatsComponent, FirstView );
-		}
 
 		followList = new FollowList();
 
@@ -451,35 +444,37 @@ module.exports = {
 			siteComponent = SiteStatsComponent;
 
 			ReactDom.render(
-				React.createElement( siteComponent, {
-					date: date,
-					charts: charts,
-					chartDate: chartDate,
-					chartTab: chartTab,
-					path: context.pathname,
-					context: context,
-					sites: sites,
-					activeTabVisitsList: activeTabVisitsList,
-					visitsList: visitsList,
-					postsPagesList: postsPagesList,
-					referrersList: referrersList,
-					clicksList: clicksList,
-					authorsList: authorsList,
-					countriesList: countriesList,
-					videoPlaysList: videoPlaysList,
-					siteId: siteId,
-					period: period,
-					chartPeriod: chartPeriod,
-					tagsList: tagsList,
-					commentsList: commentsList,
-					wpcomFollowersList: wpcomFollowersList,
-					emailFollowersList: emailFollowersList,
-					commentFollowersList: commentFollowersList,
-					publicizeList: publicizeList,
-					followList: followList,
-					searchTermsList: searchTermsList,
-					slug: siteDomain
-				} ),
+				React.createElement( ReactRedux.Provider, { store: context.store },
+					React.createElement( siteComponent, {
+						date: date,
+						charts: charts,
+						chartDate: chartDate,
+						chartTab: chartTab,
+						path: context.pathname,
+						context: context,
+						sites: sites,
+						activeTabVisitsList: activeTabVisitsList,
+						visitsList: visitsList,
+						postsPagesList: postsPagesList,
+						referrersList: referrersList,
+						clicksList: clicksList,
+						authorsList: authorsList,
+						countriesList: countriesList,
+						videoPlaysList: videoPlaysList,
+						siteId: siteId,
+						period: period,
+						chartPeriod: chartPeriod,
+						tagsList: tagsList,
+						commentsList: commentsList,
+						wpcomFollowersList: wpcomFollowersList,
+						emailFollowersList: emailFollowersList,
+						commentFollowersList: commentFollowersList,
+						publicizeList: publicizeList,
+						followList: followList,
+						searchTermsList: searchTermsList,
+						slug: siteDomain
+					} )
+				),
 				document.getElementById( 'primary' )
 			);
 		}
