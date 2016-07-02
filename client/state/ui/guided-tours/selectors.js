@@ -13,7 +13,7 @@ import uniq from 'lodash/uniq';
 /**
  * Internal dependencies
  */
-import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
+import { ROUTE_SET } from 'state/action-types';
 import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
@@ -98,12 +98,14 @@ const getTourFromQuery = createSelector(
  * otherwise.
  */
 const hasJustSeenTour = createSelector(
-	( state, tour ) => find( getActionLog( state ), {
-		type: GUIDED_TOUR_UPDATE,
-		shouldShow: false,
-		tour,
-	} ),
-	getActionLog
+	( state, tourName ) => {
+		const { timestamp } = getInitialQueryArguments( state );
+		return getToursHistory( state ).some( entry =>
+			entry.tourName === tourName &&
+			entry.timestamp > timestamp
+		);
+	},
+	[ getInitialQueryArguments, getToursHistory ]
 );
 
 /*
@@ -180,9 +182,10 @@ export const getGuidedTourState = createSelector(
 		const tour = findEligibleTour( state );
 		const shouldReallyShow = !! tour;
 
-		console.log( 'tours reached', getToursFromFeaturesReached( state ) );
-		console.log( 'tours seen', getToursSeen( state ) );
-		console.log( 'found', tour );
+		console.log(
+			'tours: reached', getToursFromFeaturesReached( state ),
+			'seen', getToursSeen( state ),
+			'found', tour );
 
 		if ( ! tour ) {
 			return {

@@ -12,9 +12,6 @@ import {
 	getGuidedTourState,
 	findEligibleTour,
 } from '../selectors';
-import {
-	GUIDED_TOUR_UPDATE,
-} from 'state/action-types';
 import guidedToursConfig from 'layout/guided-tours/config';
 
 describe( 'selectors', () => {
@@ -106,6 +103,12 @@ describe( 'selectors', () => {
 			finished: true,
 		};
 
+		const testTourSeen = {
+			tourName: 'test',
+			timestamp: 1337,
+			finished: true,
+		};
+
 		it( 'should return undefined if nothing relevant in log', () => {
 			const state = makeState( { actionLog: [ { type: 'IRRELEVANT' } ] } );
 			const tour = findEligibleTour( state );
@@ -139,16 +142,15 @@ describe( 'selectors', () => {
 			expect( tour ).to.equal( 'main' );
 		} );
 		it( 'should dismiss a requested tour at the end', () => {
-			const finishMainTour = {
-				type: GUIDED_TOUR_UPDATE,
-				tour: 'main',
-				shouldShow: false,
+			const mainTourJustSeen = {
+				tourName: 'main',
+				timestamp: 1338,
 				finished: true,
 			};
 			const state = makeState( {
-				actionLog: [ navigateToThemes, finishMainTour ],
-				toursHistory: [ themesTourSeen ],
-				queryArguments: { tour: 'main' }
+				actionLog: [ navigateToThemes ],
+				toursHistory: [ themesTourSeen, mainTourJustSeen ],
+				queryArguments: { tour: 'main', timestamp: 0 }
 			} );
 			const tour = findEligibleTour( state );
 
@@ -162,8 +164,8 @@ describe( 'selectors', () => {
 			 */
 			const state = makeState( {
 				actionLog: times( 50, constant( navigateToTest ) ),
-				toursHistory: [ themesTourSeen ],
-				queryArguments: { tour: 'themes' }
+				toursHistory: [ testTourSeen, themesTourSeen ],
+				queryArguments: { tour: 'themes', timestamp: 0 }
 			} );
 			const tour = findEligibleTour( state );
 
