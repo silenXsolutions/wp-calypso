@@ -21,6 +21,7 @@ import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
+import { isMobile } from 'lib/viewport';
 
 export default React.createClass( {
 	displayName: 'StatsInsights',
@@ -74,7 +75,7 @@ export default React.createClass( {
 				<SidebarNavigation />
 				<StatsNavigation section="insights" site={ site } />
 				<div id="my-stats-content">
-					<PostingActivity />
+					{ ! isMobile() && <PostingActivity /> }
 					<LatestPostSummary site={ site } />
 					<TodaysStats
 						siteId={ site ? site.ID : 0 }
