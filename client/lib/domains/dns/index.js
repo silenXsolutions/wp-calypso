@@ -88,6 +88,8 @@ function getNormalizedData( record, selectedDomainName ) {
 	if ( record.target ) {
 		normalizedRecord.target = getFieldWithDot( record.target );
 	}
+	// Leading '_' in SRV's service field are a convention - the record
+	// itself should not contain them
 	if ( record.service ) {
 		normalizedRecord.service = trimStart( record.service, '_' );
 	}
