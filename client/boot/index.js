@@ -38,6 +38,7 @@ var config = require( 'config' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
 	pushNotificationsInit = require( 'state/push-notifications/actions' ).init,
+	firstViewInit = require( 'state/first-view/actions' ).init,
 	sections = require( 'sections' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	setRouteAction = require( 'state/notices/actions' ).setRoute,
@@ -212,6 +213,8 @@ function reduxStoreReady( reduxStore ) {
 			// If the browser is capable, registers a service worker & exposes the API
 			reduxStore.dispatch( pushNotificationsInit() );
 		}
+
+		reduxStore.dispatch( firstViewInit( { reduxStore, user } ) );
 	} else {
 		analytics.setSuperProps( superProps );
 	}
